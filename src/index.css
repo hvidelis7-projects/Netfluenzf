@@ -1,0 +1,874 @@
+/**
+ * Global styles: Tailwind layers, design tokens, glass UI, brand button, marquee.
+ * Fonts are loaded from Google Fonts in `index.html`.
+ *
+ * Design principles (Netfluenz)
+ * — Tokens: use CSS variables for brand, text, and glass (--brand, --text-main, --text-muted, etc.).
+ * — Typography: Playfair Display for display headings (h1–h3, .serif); Plus Jakarta Sans for UI/body (weights in `index.html`).
+ * — Color hierarchy: primary text = --text-main; supporting copy = --text-muted; accents = brand gradient (.brand-text) or solid brand.
+ * — Surfaces: glass = translucency + backdrop blur + light border (see .glass-card); keep elevation subtle.
+ * — Motion: respect prefers-reduced-motion (hero Ken Burns, marquee; prefer shorter transitions when reduced).
+ * — Focus: keyboard users get a visible ring on interactive controls (.focus-ring or focus-visible utilities).
+ * — Density: generous radius (rounded-2xl+), consistent max-width containers (max-w-7xl), clear section rhythm.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand: #FF5500;
+  --brand-light: #FF8833;
+  --brand-dark: #c73d00;
+  --bg: #F8F9FA;
+  --text-main: #111827;
+  --text-muted: #6B7280;
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-bg: rgba(255, 255, 255, 0.65);
+}
+
+/** Mobile full-screen nav: own stacking layer over main content. */
+.mobile-nav-overlay {
+  isolation: isolate;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg);
+  color: var(--text-main);
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(255, 85, 0, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(255, 136, 51, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(255, 85, 0, 0.05) 0px, transparent 50%);
+  background-attachment: fixed;
+}
+
+h1,
+h2,
+h3,
+.serif {
+  font-family: 'Playfair Display', serif;
+  text-rendering: optimizeLegibility;
+}
+
+/* Noise Texture */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 9999;
+  filter: invert(1);
+}
+
+.brand-text {
+  background: linear-gradient(135deg, var(--brand), var(--brand-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/** Marketing home: headline gradient on dark scrim (cinematic hero). */
+.home-hero-headline {
+  filter: drop-shadow(0 8px 40px rgba(0, 0, 0, 0.55));
+}
+
+/** Marketing home: editorial rhythm, section contrast, readable neutrals. */
+.home-brand {
+  position: relative;
+  --home-text-display: #0c0a09;
+  --home-text-body: #44403c;
+  /** Single token for uppercase section / eyebrow labels (use with `.home-overline`). */
+  --home-label-tracking: 0.2em;
+  /** Display serif (section h2/h3): tighter leading + slight negative tracking at scale. */
+  --home-leading-display: 1.16;
+  --home-letter-display: -0.018em;
+  /** Long marketing prose: slightly roomier for readability on glass. */
+  --home-leading-prose: 1.68;
+  /** Radius scale: cards/panels = 1rem (rounded-2xl); primary CTAs = full pill only. */
+  --home-radius-card: 1rem;
+  --home-radius-panel: 1.25rem;
+}
+
+/** UI text: kerning, ligatures, contextual alternates (safe on Plus Jakarta Sans). */
+.font-ui-refined {
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+}
+
+/** Marketing: uppercase labels share one tracking token. */
+.home-brand .home-overline {
+  letter-spacing: var(--home-label-tracking);
+}
+
+/** Marketing: Playfair section headings (not hero h1 — it sets its own line height). */
+.home-brand h2,
+.home-brand h3 {
+  line-height: var(--home-leading-display);
+  letter-spacing: var(--home-letter-display);
+}
+
+/** Hero: extra read legibility over photography (bottom / start bias). */
+.home-hero-scrim-read {
+  pointer-events: none;
+  background: radial-gradient(
+    75% 55% at 15% 85%,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.22) 45%,
+    transparent 72%
+  );
+}
+
+/** Hero: subtle mesh behind copy (no extra images). */
+.home-hero-mesh {
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 90% 70% at 10% 20%, rgba(255, 85, 0, 0.12), transparent 52%),
+    radial-gradient(ellipse 70% 50% at 85% 75%, rgba(255, 136, 51, 0.08), transparent 50%);
+  mix-blend-mode: soft-light;
+}
+
+/** Dark pillars block: warm charcoal + inset top highlight. */
+.home-pillars-slab {
+  background: linear-gradient(180deg, #10141f 0%, #0a0c12 28%, #08090c 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 24px 60px -28px rgba(0, 0, 0, 0.45);
+}
+
+/** Staggered section entrance (first paint); disabled when user prefers reduced motion. */
+@keyframes home-section-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.home-brand > section.home-section-reveal {
+  opacity: 0;
+  animation: home-section-enter 0.68s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.home-brand > section.home-section-reveal:nth-of-type(2) {
+  animation-delay: 0.05s;
+}
+.home-brand > section.home-section-reveal:nth-of-type(3) {
+  animation-delay: 0.1s;
+}
+.home-brand > section.home-section-reveal:nth-of-type(4) {
+  animation-delay: 0.15s;
+}
+.home-brand > section.home-section-reveal:nth-of-type(5) {
+  animation-delay: 0.2s;
+}
+.home-brand > section.home-section-reveal:nth-of-type(6) {
+  animation-delay: 0.25s;
+}
+.home-brand > section.home-section-reveal:nth-of-type(7) {
+  animation-delay: 0.3s;
+}
+.home-brand > section.home-section-reveal:nth-of-type(8) {
+  animation-delay: 0.35s;
+}
+.home-brand > section.home-section-reveal:nth-of-type(9) {
+  animation-delay: 0.4s;
+}
+
+/** Premium framing: very light wash so alternating white/stone sections stay crisp. */
+.home-brand::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(50rem 22rem at 10% 0%, rgba(255, 85, 0, 0.04), transparent 55%),
+    radial-gradient(42rem 18rem at 95% 35%, rgba(255, 255, 255, 0.5), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.home-brand > * {
+  position: relative;
+  z-index: 1;
+}
+
+/**
+ * Homepage: grey body / labels (default --text-muted #6B7280 is weak on pale gradients).
+ * Use gray-700 so secondary copy stays clearly secondary but readable (~7:1 on white).
+ */
+.home-brand .text-muted {
+  color: #1f2937;
+}
+
+/** Uppercase section labels — consistent “luxury label” tracking. */
+.home-brand .home-label {
+  letter-spacing: var(--home-label-tracking);
+}
+
+/** Long-form body (FAQ answers, journey steps): sans, comfortable line height. */
+.home-brand .home-body-prose {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  line-height: var(--home-leading-prose);
+  letter-spacing: 0.01em;
+}
+
+/**
+ * Narrative stack (Why we exist → FAQ): soft warmth + ambient light; pairs with `.home-glass-*`.
+ */
+.home-narrative-band,
+.home-narrative-band-alt {
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.78);
+}
+
+/**
+ * Light wash only — keeps the Layout hero/shell photography visible through the band.
+ * Readability lives on `.home-glass-*` surfaces, not on these fills.
+ */
+.home-narrative-band {
+  background: linear-gradient(
+    165deg,
+    rgba(255, 252, 249, 0.38) 0%,
+    rgba(255, 255, 255, 0.28) 42%,
+    rgba(250, 247, 242, 0.34) 100%
+  );
+}
+
+.home-narrative-band-alt {
+  background: linear-gradient(
+    195deg,
+    rgba(255, 255, 255, 0.34) 0%,
+    rgba(255, 250, 245, 0.3) 48%,
+    rgba(255, 255, 255, 0.32) 100%
+  );
+}
+
+.home-narrative-band::before,
+.home-narrative-band-alt::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.home-narrative-band::before {
+  background:
+    radial-gradient(55rem 42rem at -8% 8%, rgba(255, 85, 0, 0.045), transparent 52%),
+    radial-gradient(44rem 34rem at 108% 0%, rgba(255, 136, 51, 0.038), transparent 50%),
+    radial-gradient(38rem 30rem at 50% 102%, rgba(255, 85, 0, 0.032), transparent 56%);
+}
+
+.home-narrative-band-alt::before {
+  background:
+    radial-gradient(46rem 36rem at 102% 25%, rgba(255, 85, 0, 0.042), transparent 52%),
+    radial-gradient(40rem 32rem at -5% 85%, rgba(255, 136, 51, 0.034), transparent 50%);
+}
+
+.home-narrative-band > *,
+.home-narrative-band-alt > * {
+  position: relative;
+  z-index: 1;
+}
+
+/** Frosted surface: section rails, cards, and FAQ rows. */
+.home-glass-rail {
+  border-radius: 1.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.66);
+  backdrop-filter: blur(26px) saturate(1.15);
+  -webkit-backdrop-filter: blur(26px) saturate(1.15);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    0 2px 10px -2px rgba(15, 23, 42, 0.05),
+    0 24px 56px -32px rgba(15, 23, 42, 0.12),
+    0 40px 90px -44px rgba(255, 85, 0, 0.09);
+}
+
+.home-glass-card {
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(20px) saturate(1.12);
+  -webkit-backdrop-filter: blur(20px) saturate(1.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.96),
+    0 2px 8px -2px rgba(15, 23, 42, 0.04),
+    0 18px 44px -28px rgba(15, 23, 42, 0.1),
+    0 28px 70px -40px rgba(255, 85, 0, 0.08);
+}
+
+.home-glass-card--warm {
+  border-color: rgba(255, 228, 206, 0.82);
+  background: rgba(255, 252, 248, 0.72);
+}
+
+.home-glass-card--bento {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.home-glass-card--bento:hover {
+  border-color: rgba(255, 200, 160, 0.55);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 8px 28px -12px rgba(255, 85, 0, 0.14),
+    0 20px 48px -28px rgba(15, 23, 42, 0.1);
+}
+
+details.home-glass-faq {
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.56);
+  backdrop-filter: blur(18px) saturate(1.1);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 4px 18px -10px rgba(15, 23, 42, 0.07);
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+details.home-glass-faq:hover {
+  border-color: rgba(255, 210, 180, 0.65);
+  background: rgba(255, 255, 255, 0.66);
+}
+
+details.home-glass-faq[open] {
+  border-color: rgba(255, 190, 150, 0.55);
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 12px 36px -16px rgba(255, 85, 0, 0.12),
+    0 6px 20px -10px rgba(15, 23, 42, 0.07);
+}
+
+/** Dark scope slab: lifted frame on the narrative canvas. */
+.home-pillars-frame {
+  border-radius: 1.75rem;
+  padding: 3px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.35), rgba(255, 140, 60, 0.2) 45%, rgba(255, 255, 255, 0.12));
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.2),
+    0 28px 80px -28px rgba(0, 0, 0, 0.28),
+    0 48px 100px -40px rgba(255, 85, 0, 0.14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-glass-card--bento:hover {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.92),
+      0 2px 8px -2px rgba(15, 23, 42, 0.035),
+      0 18px 44px -28px rgba(15, 23, 42, 0.09),
+      0 28px 70px -40px rgba(255, 85, 0, 0.07);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .home-narrative-band {
+    background: linear-gradient(
+      165deg,
+      rgba(255, 252, 249, 0.92) 0%,
+      rgba(255, 255, 255, 0.88) 44%,
+      rgba(250, 247, 242, 0.9) 100%
+    );
+  }
+
+  .home-narrative-band-alt {
+    background: linear-gradient(
+      195deg,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 250, 245, 0.88) 48%,
+      rgba(255, 255, 255, 0.9) 100%
+    );
+  }
+
+  .home-glass-rail,
+  .home-glass-card,
+  .home-glass-card--warm,
+  details.home-glass-faq,
+  details.home-glass-faq[open] {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .home-glass-rail {
+    background: rgba(255, 255, 255, 0.96);
+  }
+
+  .home-glass-card {
+    background: rgba(255, 255, 255, 0.96);
+  }
+
+  .home-glass-card--warm {
+    background: rgba(255, 252, 248, 0.96);
+  }
+
+  details.home-glass-faq {
+    background: rgba(255, 255, 255, 0.94);
+  }
+
+  details.home-glass-faq[open] {
+    background: rgba(255, 255, 255, 0.98);
+  }
+}
+
+/** Stats slab: inner top edge + inset lift so the block reads as one object. */
+.home-stats-slab {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 40px 100px -36px rgba(0, 0, 0, 0.82);
+}
+
+/** Lighter grain on marketing page (mostly white sections). */
+body:has(.home-brand)::before {
+  opacity: 0.014;
+}
+
+/**
+ * Hero: gradient headline uses background-clip; drop-shadow reads on variable scrim
+ * (text-shadow does not apply reliably to clipped text).
+ */
+.home-brand .home-hero-brand-text {
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 28px rgba(0, 0, 0, 0.4));
+}
+
+/** Cinematic vignette on hero (works with rotating photography). */
+.home-hero-vignette {
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 85% 70% at 50% 45%,
+    transparent 0%,
+    rgba(0, 0, 0, 0.35) 55%,
+    rgba(0, 0, 0, 0.72) 100%
+  );
+}
+
+/** Fine top highlight on hero for depth. */
+.home-hero-top-glow {
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, transparent 35%);
+}
+
+/** Hero trust chips: subtle glass + premium readability on dark photography. */
+.home-premium-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+  color: rgba(255, 255, 255, 0.92);
+  border-radius: 9999px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 12px 30px -20px rgba(0, 0, 0, 0.75);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.38);
+  transition: transform 220ms ease, border-color 220ms ease, background-color 220ms ease;
+}
+
+.home-premium-chip:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.38);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.08));
+}
+
+/** Hero side panel: add reflective edge + ambient glow for premium depth. */
+.home-hero-panel {
+  position: relative;
+  overflow: hidden;
+}
+.home-hero-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.16), transparent 35%, transparent 70%, rgba(255, 255, 255, 0.1));
+  pointer-events: none;
+}
+.home-hero-panel::after {
+  content: "";
+  position: absolute;
+  right: -25%;
+  top: -25%;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 85, 0, 0.28), transparent 70%);
+  filter: blur(10px);
+  pointer-events: none;
+}
+.home-hero-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+/** Shared intro frosted blocks. */
+.home-intro-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.home-intro-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent 42%);
+  pointer-events: none;
+}
+
+.home-intro-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+/** Premium section separators for visual rhythm. */
+.home-section-divider {
+  position: relative;
+}
+
+.home-section-divider::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: min(520px, 70%);
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, rgba(255, 85, 0, 0.28), transparent);
+  pointer-events: none;
+}
+
+/** Glass card sheen with calmer premium motion. */
+.home-premium-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.26), transparent 38%, transparent 62%, rgba(255, 255, 255, 0.14));
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.home-premium-card::after {
+  content: "";
+  position: absolute;
+  inset: -40% auto auto -38%;
+  width: 52%;
+  height: 185%;
+  transform: rotate(15deg);
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+  opacity: 0;
+  transition: opacity 360ms ease, transform 420ms ease;
+  pointer-events: none;
+}
+
+.home-premium-card:hover::after {
+  opacity: 1;
+  transform: translateX(26%) rotate(15deg);
+}
+
+/** Readability helper for sections using frosted/glass backgrounds. */
+.home-glass-readable {
+  text-shadow: none;
+}
+
+.home-glass-heading {
+  text-shadow: none;
+}
+
+/** Trust marquee: edge fades so logos feel inset (softer 10% / 90% = calmer strip). */
+.home-marquee-mask {
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
+}
+
+/** Final CTA panel: subtle diagonal sheen + soft light orb. */
+.home-cta-panel {
+  background: linear-gradient(135deg, #ff5e14 0%, var(--brand-dark) 48%, #8a2800 100%);
+  position: relative;
+  overflow: hidden;
+}
+.home-cta-panel::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: min(55vw, 480px);
+  height: min(55vw, 480px);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.14) 0%, transparent 70%);
+  pointer-events: none;
+}
+.home-cta-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -28deg,
+    transparent,
+    transparent 12px,
+    rgba(255, 255, 255, 0.04) 12px,
+    rgba(255, 255, 255, 0.04) 13px
+  );
+  pointer-events: none;
+}
+.home-cta-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+/** CTA title polish: tiny boost in perceived premium contrast. */
+.home-cta-panel h2 {
+  text-wrap: balance;
+  letter-spacing: 0.01em;
+}
+
+/** Secondary body copy; pairs with font-sans / Plus Jakarta Sans. */
+.text-muted {
+  color: var(--text-muted);
+}
+
+/** Keyboard focus: use on buttons/links that need explicit ring beyond Tailwind utilities. */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.02),
+    0 2px 4px -1px rgba(0, 0, 0, 0.02),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.05),
+    0 10px 10px -5px rgba(0, 0, 0, 0.02),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.button-brand {
+  background: linear-gradient(135deg, var(--brand), var(--brand-light));
+  color: #ffffff;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px 0 rgba(255, 85, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.button-brand:hover {
+   box-shadow: 0 8px 25px rgba(255, 85, 0, 0.4);
+   transform: translateY(-2px);
+}
+
+.button-brand:active {
+   transform: translateY(0);
+}
+
+.button-brand:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.1);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover { background-color: rgba(0,0,0,0.2); }
+
+/* Animations */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/** Hero: staggered text reveal (respect `prefers-reduced-motion` below). */
+@keyframes home-hero-reveal {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.125rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes home-hero-reveal-headline {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.75rem, 0) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.home-hero-anim {
+  opacity: 0;
+  animation: home-hero-reveal 0.85s cubic-bezier(0.16, 1, 0.32, 1) both;
+}
+
+.home-hero-anim--slow {
+  animation-duration: 1.05s;
+}
+
+.home-hero-anim--headline {
+  animation-name: home-hero-reveal-headline;
+  animation-duration: 1.05s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.28, 1);
+}
+
+.home-hero-anim--d0 {
+  animation-delay: 0s;
+}
+.home-hero-anim--d1 {
+  animation-delay: 0.07s;
+}
+.home-hero-anim--d2 {
+  animation-delay: 0.16s;
+}
+.home-hero-anim--d3 {
+  animation-delay: 0.3s;
+}
+.home-hero-anim--d4 {
+  animation-delay: 0.42s;
+}
+.home-hero-anim--d5 {
+  animation-delay: 0.54s;
+}
+.home-hero-anim--d6 {
+  animation-delay: 0.66s;
+}
+.home-hero-anim--d7 {
+  animation-delay: 0.38s;
+}
+
+/** Hero side panel: enters after primary column motion + CTAs (see `HomeHeroKinetic`). */
+.home-hero-anim--d8 {
+  animation-delay: 0.92s;
+}
+
+/** Slow gradient drift on hero brand span (paired with `.brand-text` background-clip). */
+@keyframes home-hero-brand-gradient-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.home-brand .home-hero-brand-text.home-hero-brand-text--shimmer {
+  background-size: 200% 200%;
+  animation: home-hero-brand-gradient-shift 11s ease-in-out infinite;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+/** Trust strip: static, wrapped layout when user prefers reduced motion. */
+.home-marquee-track {
+  display: flex;
+}
+
+/* Welcome page: slow zoom on the visible hero photo */
+@keyframes home-hero-ken-burns {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.12) translate(-1%, -0.5%); }
+}
+.home-hero-ken-burns {
+  animation: home-hero-ken-burns 7s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+  .home-marquee-track {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 2rem;
+    white-space: normal;
+    row-gap: 1rem;
+  }
+  .home-hero-ken-burns {
+    animation: none;
+  }
+  .home-brand .home-hero-brand-text.home-hero-brand-text--shimmer {
+    animation: none !important;
+    background-size: 100% 100% !important;
+  }
+  .home-premium-chip {
+    transition: none;
+  }
+  .home-premium-chip:hover {
+    transform: none;
+  }
+  .home-premium-card::after {
+    transition: none;
+  }
+  .home-premium-card:hover::after {
+    opacity: 0;
+    transform: rotate(15deg);
+  }
+  .button-brand {
+    transition: none;
+  }
+  .button-brand:hover {
+    transform: none;
+  }
+  /** Homepage cards: no animated shadow/border morph (hover can still apply instantly). */
+  .home-brand .home-card-interactive {
+    transition: none !important;
+  }
+  .home-brand .home-bento-icon {
+    transition: none !important;
+  }
+  .home-brand .group:hover .home-bento-icon {
+    transform: none !important;
+  }
+  .home-hero-anim,
+  .home-hero-anim--headline {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .home-brand > section.home-section-reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

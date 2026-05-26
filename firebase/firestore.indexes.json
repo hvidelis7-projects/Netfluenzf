@@ -1,0 +1,10 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "marketplaceListings",
+      "queryScope": "COLLECTION",
+      "fields": [{ "fieldPath": "updatedAt", "order": "DESCENDING" }]
+    }
+  ],
+  "fieldOverrides": []
+}

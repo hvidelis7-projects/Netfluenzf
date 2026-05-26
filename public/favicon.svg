@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="a" x1="12" y1="8" x2="92" y2="96" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF7A33"/>
+      <stop offset=".45" stop-color="#FF5500"/>
+      <stop offset="1" stop-color="#E04000"/>
+    </linearGradient>
+    <radialGradient id="b" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(78 18) rotate(120) scale(90 86)">
+      <stop stop-color="#FF9933" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#FF5500" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="c" x1="50" y1="12" x2="50" y2="48" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF" stop-opacity=".4"/>
+      <stop offset="1" stop-color="#FFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="27" fill="url(#a)"/>
+  <rect width="100" height="100" rx="27" fill="url(#b)"/>
+  <ellipse cx="42" cy="26" rx="34" ry="18" fill="url(#c)"/>
+  <path d="M28 30L28 70M28 30L72 70M72 30L72 70" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity=".98"/>
+</svg>

@@ -1,0 +1,28 @@
+rules_version = '2';
+
+/**
+ * Deploy with: `firebase deploy --only firestore:rules`
+ * Adjust collection names to match `src/firebase/collections.ts`.
+ */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /profiles/{userId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /userData/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /marketplaceListings/{listingId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.brandId == request.auth.uid;
+      allow update, delete: if request.auth != null
+        && resource.data.brandId == request.auth.uid;
+    }
+  }
+}
