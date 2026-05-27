@@ -55,7 +55,57 @@ export const HOME_PRODUCT_PILLARS = [
 
 /** Official Netfluenz icon logo (SVG, transparent background). */
 export const NetfluenzLogo: React.FC<{ className?: string }> = ({ className = 'w-10 h-10' }) => {
-  return <img src="/netfluenz-logo.svg" alt="Netfluenz" className={className} />;
+  return (
+    <svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <defs>
+        <linearGradient id="logoOrangeGrad" x1="60" y1="180" x2="200" y2="60" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#FF7A00" />
+          <stop offset="1" stop-color="#FF3300" />
+        </linearGradient>
+        <filter id="logoShadow" x="-10%" y="-10%" width="120%" height="120%">
+          <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#FF3300" flood-opacity="0.22" />
+        </filter>
+      </defs>
+      
+      {/* Modern corporate hexagonal connectivity grid representing the "Net" */}
+      <g stroke="#334155" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" opacity="0.8">
+        <polygon points="128,32 211,80 211,176 128,224 45,176 45,80" />
+        <line x1="128" y1="32" x2="128" y2="128" />
+        <line x1="211" y1="80" x2="128" y2="128" />
+        <line x1="211" y1="176" x2="128" y2="128" />
+        <line x1="128" y1="224" x2="128" y2="128" />
+        <line x1="45" y1="176" x2="128" y2="128" />
+        <line x1="45" y1="80" x2="128" y2="128" />
+      </g>
+
+      {/* Network Node Vertices */}
+      <circle cx="128" cy="32" r="9" fill="#1E293B" />
+      <circle cx="211" cy="80" r="9" fill="#1E293B" />
+      <circle cx="211" cy="176" r="9" fill="#1E293B" />
+      <circle cx="128" cy="224" r="9" fill="#1E293B" />
+      <circle cx="45" cy="176" r="9" fill="#1E293B" />
+      <circle cx="45" cy="80" r="9" fill="#1E293B" />
+      <circle cx="128" cy="128" r="7" fill="#475569" />
+
+      {/* Sleek Orange Gradient "N"-shaped Growth Arrow */}
+      <g filter="url(#logoShadow)">
+        <path
+          d="M80,165 L80,92 L176,165 L176,104"
+          stroke="url(#logoOrangeGrad)"
+          strokeWidth="16"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M158,104 L176,104 L176,122"
+          stroke="url(#logoOrangeGrad)"
+          strokeWidth="16"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+    </svg>
+  );
 };
 
 /** Custom premium PWA Download Icon resembling the Netfluenz logo. */
