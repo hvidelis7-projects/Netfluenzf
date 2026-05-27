@@ -57,3 +57,64 @@ export const HOME_PRODUCT_PILLARS = [
 export const NetfluenzLogo: React.FC<{ className?: string }> = ({ className = 'w-10 h-10' }) => {
   return <img src="/netfluenz-logo.svg" alt="Netfluenz" className={className} />;
 };
+
+/** Custom premium PWA Download Icon resembling the Netfluenz logo. */
+export const PwaDownloadIcon: React.FC<{ className?: string }> = ({ className = 'w-10 h-10' }) => {
+  return (
+    <svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <defs>
+        <radialGradient id="dlTip" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(128 56) rotate(90) scale(60)">
+          <stop offset="0" stop-color="#FFECC7"/>
+          <stop offset="0.5" stop-color="#FFC060"/>
+          <stop offset="1" stop-color="#FF5500"/>
+        </radialGradient>
+        <linearGradient id="dlArrowGrad" x1="128" y1="50" x2="128" y2="180" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#FFE3C1"/>
+          <stop offset="1" stop-color="#FF5500"/>
+        </linearGradient>
+        <filter id="dlShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.3"/>
+        </filter>
+        <g id="petal-half">
+          <path d="M128 48C143 48 154 59 154 73C154 89 141 101 128 101C115 101 102 89 102 73C102 59 113 48 128 48Z" fill="url(#dlTip)" opacity="0.45"/>
+        </g>
+      </defs>
+      
+      <g filter="url(#dlShadow)">
+        <use href="#petal-half" transform="rotate(0 128 128)"/>
+        <use href="#petal-half" transform="rotate(45 128 128)"/>
+        <use href="#petal-half" transform="rotate(90 128 128)"/>
+        <use href="#petal-half" transform="rotate(135 128 128)"/>
+        <use href="#petal-half" transform="rotate(180 128 128)"/>
+        <use href="#petal-half" transform="rotate(225 128 128)"/>
+        <use href="#petal-half" transform="rotate(270 128 128)"/>
+        <use href="#petal-half" transform="rotate(315 128 128)"/>
+      </g>
+
+      <g filter="url(#dlShadow)">
+        <path 
+          d="M128 45V155M128 155L90 117M128 155L166 117" 
+          stroke="url(#dlArrowGrad)" 
+          strokeWidth="20" 
+          strokeLinecap="round" 
+          strokeLinejoin="round"
+        />
+        <path 
+          d="M75 190H181" 
+          stroke="#FF5500" 
+          strokeWidth="20" 
+          strokeLinecap="round"
+        />
+      </g>
+      
+      <circle cx="128" cy="24" r="6.5" fill="#FF5500"/>
+      <circle cx="202" cy="54" r="6" fill="#FFB44B"/>
+      <circle cx="232" cy="128" r="6.5" fill="#FF5500"/>
+      <circle cx="202" cy="202" r="6" fill="#FFB44B"/>
+      <circle cx="128" cy="232" r="6.5" fill="#FF5500"/>
+      <circle cx="54" cy="202" r="6" fill="#FFB44B"/>
+      <circle cx="24" cy="128" r="6.5" fill="#FF5500"/>
+      <circle cx="54" cy="54" r="6" fill="#FFB44B"/>
+    </svg>
+  );
+};

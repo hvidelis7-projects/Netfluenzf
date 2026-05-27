@@ -1,0 +1,22 @@
+{
+  "short_name": "Netfluenz",
+  "name": "Netfluenz - Creator Growth Infrastructure",
+  "icons": [
+    {
+      "src": "/netfluenz-logo.png",
+      "type": "image/png",
+      "sizes": "256x256"
+    },
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FF5500",
+  "display": "standalone",
+  "orientation": "portrait"
+}

@@ -62,6 +62,10 @@ interface AppContextType {
   notifications: string[];
   addNotification: (msg: string) => void;
   availableInfluencers: Influencer[];
+  isPwaInstallable: boolean;
+  installPwa: () => Promise<void>;
+  showIosInstallInstructions: boolean;
+  setShowIosInstallInstructions: (val: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -402,6 +406,67 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isPwaInstallable, setIsPwaInstallable] = useState(false);
+  const [showIosInstallInstructions, setShowIosInstallInstructions] = useState(false);
+
+  useEffect(() => {
+    const isIosDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsPwaInstallable(true);
+    };
+
+    const handleAppInstalled = () => {
+      setDeferredPrompt(null);
+      setIsPwaInstallable(false);
+      addNotification('Netfluenz has been successfully installed as a Progressive Web App! 🎉');
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    // If it's iOS and not standalone, PWA can be installed via Safari Share -> Add to Home Screen
+    if (isIosDevice && !isStandalone) {
+      setIsPwaInstallable(true);
+    }
+
+    // Fallback: Enable the download button on mobile devices so they can see/interact with it
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile && !isStandalone) {
+      setIsPwaInstallable(true);
+    }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
+  const installPwa = useCallback(async () => {
+    const isIosDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    if (isIosDevice) {
+      setShowIosInstallInstructions(true);
+      return;
+    }
+
+    if (!deferredPrompt) {
+      // If prompt isn't captured (e.g. already installed or desktop browser), show guidance
+      addNotification('To install, open this page in Chrome/Safari on your mobile device and select "Add to Home Screen".');
+      return;
+    }
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setIsPwaInstallable(false);
+      setDeferredPrompt(null);
+    }
+  }, [deferredPrompt]);
+
   return (
     <AppContext.Provider
       value={{
@@ -434,6 +499,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         notifications,
         addNotification,
         availableInfluencers,
+        isPwaInstallable,
+        installPwa,
+        showIosInstallInstructions,
+        setShowIosInstallInstructions,
       }}
     >
       {children}

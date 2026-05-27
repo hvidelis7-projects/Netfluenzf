@@ -6,7 +6,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import { NetfluenzLogo, APP_SHELL_BACKGROUND } from '../constants';
+import { NetfluenzLogo, APP_SHELL_BACKGROUND, PwaDownloadIcon } from '../constants';
 import HomeHeroBackground from './HomeHeroBackground';
 import { UserRole } from '../types';
 import { playSound } from '../audio.ts';
@@ -20,7 +20,15 @@ interface Toast {
 }
 
 const Layout: React.FC = () => {
-  const { notifications, role, logout } = useApp();
+  const { 
+    notifications, 
+    role, 
+    logout, 
+    isPwaInstallable, 
+    installPwa, 
+    showIosInstallInstructions, 
+    setShowIosInstallInstructions 
+  } = useApp();
   const location = useLocation();
   const navigate = useNavigate();
   const currentPage = navKeyFromPath(location.pathname);
@@ -29,6 +37,7 @@ const Layout: React.FC = () => {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [isBannerDismissed, setIsBannerDismissed] = useState(false);
   const notifPanelRef = useRef<HTMLDivElement>(null);
   const notifButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -197,6 +206,20 @@ const Layout: React.FC = () => {
             </button>
 
             <div className="hidden md:flex items-center space-x-12">
+              {isPwaInstallable && (
+                <button
+                  type="button"
+                  onClick={() => handleNavClick(() => void installPwa())}
+                  className={`flex items-center space-x-2 px-5 py-2.5 rounded-full border ${
+                    navGlassHero
+                      ? 'border-white/30 bg-white/10 hover:bg-white/20 text-white focus-visible:outline-white shadow-[0_4px_20px_rgba(255,255,255,0.1)]'
+                      : 'border-brand/30 bg-brand/5 hover:bg-brand/10 text-brand focus-visible:outline-brand shadow-[0_4px_20px_rgba(255,85,0,0.1)]'
+                  } text-[9px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 focus-visible:outline focus-visible:outline-2`}
+                >
+                  <PwaDownloadIcon className="w-4 h-4" />
+                  <span>Download App</span>
+                </button>
+              )}
               {role === UserRole.GUEST ? (
                 <div className="flex items-center space-x-6">
                   <button
@@ -485,6 +508,22 @@ const Layout: React.FC = () => {
                     </div>
                   </>
                 )}
+                {isPwaInstallable && (
+                  <div className="mt-6 pt-6 border-t border-white/60">
+                    <div className="rounded-2xl bg-gradient-to-br from-brand/10 to-amber-500/5 border border-brand/20 p-4 flex flex-col items-center text-center shadow-inner">
+                      <PwaDownloadIcon className="w-12 h-12 mb-2 animate-pulse" />
+                      <h4 className="text-xs font-black uppercase tracking-wider text-gray-900 leading-none">Netfluenz Mobile</h4>
+                      <p className="text-[9px] font-medium text-gray-600 mt-1.5 mb-3">Install on your home screen for rapid offline access.</p>
+                      <button
+                        type="button"
+                        onClick={() => handleNavClick(() => { installPwa(); setIsMobileMenuOpen(false); })}
+                        className="w-full py-2.5 rounded-full text-[9px] font-black uppercase tracking-widest text-white shadow-md transition-all active:scale-[0.98] button-brand shadow-orange-500/25"
+                      >
+                        Install App
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -520,6 +559,108 @@ const Layout: React.FC = () => {
           </div>
         </footer>
       </div>
+
+      {/* Premium Floating Mobile Install Banner */}
+      {isPwaInstallable && !isBannerDismissed && (
+        <div className="md:hidden fixed bottom-6 left-4 right-4 z-[4000] animate-in slide-in-from-bottom-10 fade-in duration-500">
+          <div className="glass-card p-4 rounded-3xl border-brand/20 bg-white/90 backdrop-blur-xl shadow-2xl flex items-center justify-between space-x-3">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 shrink-0 rounded-2xl bg-gradient-to-br from-brand/10 to-amber-500/10 border border-brand/20 flex items-center justify-center shadow-md">
+                <PwaDownloadIcon className="w-8 h-8 animate-pulse" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black uppercase tracking-wider text-gray-900 leading-none">Install Netfluenz App</span>
+                <span className="text-[8px] font-semibold text-gray-600 mt-0.5 leading-snug">Tap to install for pure mobile speed!</span>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                type="button"
+                onClick={() => handleNavClick(() => void installPwa())}
+                className="px-4 py-2 rounded-full button-brand text-[8px] font-black uppercase tracking-widest shadow-md shadow-brand/20 active:scale-95 transition-transform"
+              >
+                Install
+              </button>
+              <button
+                type="button"
+                onClick={() => handleNavClick(() => setIsBannerDismissed(true))}
+                className="p-1 rounded-full text-gray-400 hover:text-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
+                aria-label="Dismiss banner"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Premium iOS share sheets manual installer instructions modal */}
+      {showIosInstallInstructions && (
+        <div 
+          className="fixed inset-0 z-[6000] flex items-end justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-300"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="w-full max-w-md bg-white rounded-t-[2.5rem] p-6 shadow-2xl animate-in slide-in-from-bottom duration-500 border border-gray-100 pb-[max(2rem,env(safe-area-inset-bottom))]">
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex items-center space-x-3">
+                <PwaDownloadIcon className="w-8 h-8" />
+                <h3 className="text-sm font-black uppercase tracking-wider text-gray-900 serif italic">Install Netfluenz App</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => { playSound('click'); setShowIosInstallInstructions(false); }}
+                className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition"
+                aria-label="Close modal"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <p className="text-xs text-gray-600 mb-6 font-medium leading-relaxed">
+              Safari on iOS does not support automatic one-click installation. You can easily add Netfluenz to your home screen manually in <span className="font-bold text-gray-900">3 simple steps</span>:
+            </p>
+
+            <div className="space-y-4">
+              <div className="flex items-start space-x-4 p-3 bg-orange-50/50 rounded-2xl border border-orange-100/50">
+                <div className="w-7 h-7 rounded-xl bg-orange-500/10 flex items-center justify-center text-xs font-black text-brand shrink-0">1</div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-gray-900 leading-none">Tap Share Button</span>
+                  <span className="text-[9px] text-gray-600 mt-1">Tap the Safari share icon <span className="inline-block p-1 bg-white border border-gray-200 rounded mx-1 shadow-sm"><svg className="w-3.5 h-3.5 inline text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg></span> in Safari's bottom toolbar.</span>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-4 p-3 bg-orange-50/50 rounded-2xl border border-orange-100/50">
+                <div className="w-7 h-7 rounded-xl bg-orange-500/10 flex items-center justify-center text-xs font-black text-brand shrink-0">2</div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-gray-900 leading-none">Add to Home Screen</span>
+                  <span className="text-[9px] text-gray-600 mt-1">Scroll down the sharing options sheet and tap <span className="font-bold text-gray-900">"Add to Home Screen"</span> <span className="inline-block p-1 bg-white border border-gray-200 rounded mx-1 shadow-sm"><span className="text-gray-700 font-bold text-xs inline-block line-height-none leading-none">+</span></span>.</span>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-4 p-3 bg-orange-50/50 rounded-2xl border border-orange-100/50">
+                <div className="w-7 h-7 rounded-xl bg-orange-500/10 flex items-center justify-center text-xs font-black text-brand shrink-0">3</div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-gray-900 leading-none">Confirm Installation</span>
+                  <span className="text-[9px] text-gray-600 mt-1">Tap <span className="font-bold text-gray-900">"Add"</span> in the top-right corner of the confirmation panel!</span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => { playSound('click'); setShowIosInstallInstructions(false); }}
+              className="w-full mt-6 py-3 rounded-full text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-brand/20 button-brand active:scale-[0.98]"
+            >
+              Got It
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
