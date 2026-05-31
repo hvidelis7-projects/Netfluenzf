@@ -3,6 +3,16 @@
   "name": "Trifluenz - Creator Growth Infrastructure",
   "icons": [
     {
+      "src": "/trifluenz-logo.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/trifluenz-logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
       "src": "/trifluenz-logo.svg",
       "type": "image/svg+xml",
       "sizes": "256x256"

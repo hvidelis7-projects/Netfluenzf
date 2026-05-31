@@ -28,7 +28,9 @@ const Layout: React.FC = () => {
     isPwaInstallable, 
     installPwa, 
     showIosInstallInstructions, 
-    setShowIosInstallInstructions 
+    setShowIosInstallInstructions,
+    showAndroidInstallInstructions,
+    setShowAndroidInstallInstructions
   } = useApp();
   const location = useLocation();
   const navigate = useNavigate();
@@ -710,6 +712,72 @@ const Layout: React.FC = () => {
             <button
               type="button"
               onClick={() => { playSound('click'); setShowIosInstallInstructions(false); }}
+              className="w-full mt-6 py-3 rounded-full text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-brand/20 button-brand active:scale-[0.98]"
+            >
+              Got It
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Premium Android/Chrome manual installer instructions modal */}
+      {showAndroidInstallInstructions && (
+        <div 
+          className="fixed inset-0 z-[6000] flex items-end justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-300"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="w-full max-w-md bg-white rounded-t-[2.5rem] p-6 shadow-2xl animate-in slide-in-from-bottom duration-500 border border-gray-100 pb-[max(2rem,env(safe-area-inset-bottom))]">
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex items-center space-x-3">
+                <PwaDownloadIcon className="w-8 h-8 animate-bounce" />
+                <h3 className="text-sm font-black uppercase tracking-wider text-gray-900 serif italic">Install Trifluenz App</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => { playSound('click'); setShowAndroidInstallInstructions(false); }}
+                className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 transition"
+                aria-label="Close modal"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <p className="text-xs text-gray-600 mb-6 font-medium leading-relaxed">
+              You can easily install Trifluenz to your device manually from Chrome / Edge on your Android or desktop device in <span className="font-bold text-gray-900">3 simple steps</span>:
+            </p>
+
+            <div className="space-y-4">
+              <div className="flex items-start space-x-4 p-3 bg-orange-50/50 rounded-2xl border border-orange-100/50">
+                <div className="w-7 h-7 rounded-xl bg-orange-500/10 flex items-center justify-center text-xs font-black text-brand shrink-0">1</div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-gray-900 leading-none">Tap Menu Icon</span>
+                  <span className="text-[9px] text-gray-600 mt-1">Tap the Chrome menu icon (three vertical dots <span className="inline-block p-1 bg-white border border-gray-200 rounded mx-1 shadow-sm font-bold">⋮</span>) in the top-right corner of Chrome.</span>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-4 p-3 bg-orange-50/50 rounded-2xl border border-orange-100/50">
+                <div className="w-7 h-7 rounded-xl bg-orange-500/10 flex items-center justify-center text-xs font-black text-brand shrink-0">2</div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-gray-900 leading-none">Select Install App</span>
+                  <span className="text-[9px] text-gray-600 mt-1">Tap <span className="font-bold text-gray-900">"Install App"</span> or <span className="font-bold text-gray-900">"Add to Home screen"</span> in the menu list.</span>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-4 p-3 bg-orange-50/50 rounded-2xl border border-orange-100/50">
+                <div className="w-7 h-7 rounded-xl bg-orange-500/10 flex items-center justify-center text-xs font-black text-brand shrink-0">3</div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-gray-900 leading-none">Confirm & Launch</span>
+                  <span className="text-[9px] text-gray-600 mt-1">Tap <span className="font-bold text-gray-900">"Install"</span> when prompted to instantly save it as a native-speed app!</span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => { playSound('click'); setShowAndroidInstallInstructions(false); }}
               className="w-full mt-6 py-3 rounded-full text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-brand/20 button-brand active:scale-[0.98]"
             >
               Got It

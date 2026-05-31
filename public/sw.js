@@ -4,6 +4,7 @@ const ASSETS = [
   '/index.html',
   '/favicon.svg',
   '/trifluenz-logo.svg',
+  '/trifluenz-logo.png',
 ];
 
 self.addEventListener('install', (e) => {

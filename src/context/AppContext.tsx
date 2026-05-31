@@ -66,6 +66,8 @@ interface AppContextType {
   installPwa: () => Promise<void>;
   showIosInstallInstructions: boolean;
   setShowIosInstallInstructions: (val: boolean) => void;
+  showAndroidInstallInstructions: boolean;
+  setShowAndroidInstallInstructions: (val: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -409,6 +411,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isPwaInstallable, setIsPwaInstallable] = useState(false);
   const [showIosInstallInstructions, setShowIosInstallInstructions] = useState(false);
+  const [showAndroidInstallInstructions, setShowAndroidInstallInstructions] = useState(false);
 
   useEffect(() => {
     const isIosDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
@@ -454,8 +457,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     if (!deferredPrompt) {
-      // If prompt isn't captured (e.g. already installed or desktop browser), show guidance
-      addNotification('To install, open this page in Chrome/Safari on your mobile device and select "Add to Home Screen".');
+      // Show Android/generic browser installation guide if automatic prompt is missing
+      setShowAndroidInstallInstructions(true);
       return;
     }
 
@@ -503,6 +506,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         installPwa,
         showIosInstallInstructions,
         setShowIosInstallInstructions,
+        showAndroidInstallInstructions,
+        setShowAndroidInstallInstructions,
       }}
     >
       {children}
