@@ -34,6 +34,18 @@ const DEFAULT_AVATAR_BRAND =
 const DEFAULT_AVATAR_CREATOR =
   'https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?auto=format&fit=crop&q=80&w=200';
 
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+const firestoreCache: {
+  marketplaceListings?: CacheEntry<Campaign[]>;
+  influencerProfiles?: CacheEntry<Influencer[]>;
+} = {};
+
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes TTL
+
 function mapProfileDoc(id: string, data: Record<string, unknown>): UserProfile | null {
   const roleStr = data.role as string | undefined;
   if (roleStr !== 'BRAND' && roleStr !== 'INFLUENCER') return null;
@@ -138,6 +150,9 @@ export async function upsertProfileRow(
   role: UserRole,
   displayName: string
 ): Promise<void> {
+  // Invalidate public creator profiles cache on edits
+  delete firestoreCache.influencerProfiles;
+
   if (!db) return;
   const r = role === UserRole.BRAND ? 'BRAND' : 'INFLUENCER';
   await setDoc(
@@ -156,6 +171,9 @@ export async function mergeProfileFields(
   userId: string,
   partial: Partial<{ displayName: string; avatarUrl: string; email: string; verified: boolean }>
 ): Promise<void> {
+  // Invalidate public creator profiles cache on edits
+  delete firestoreCache.influencerProfiles;
+
   if (!db) return;
   await setDoc(
     doc(db, COLLECTIONS.profiles, userId),
@@ -168,8 +186,14 @@ export async function mergeProfileFields(
 }
 
 /** All published marketplace campaigns (newest first). */
-export async function listMarketplaceListings(max = 100): Promise<Campaign[]> {
+export async function listMarketplaceListings(max = 100, forceRefresh = false): Promise<Campaign[]> {
+  const now = Date.now();
+  if (!forceRefresh && firestoreCache.marketplaceListings && (now - firestoreCache.marketplaceListings.timestamp < CACHE_TTL_MS)) {
+    return firestoreCache.marketplaceListings.data;
+  }
+
   if (!db) return [];
+  let result: Campaign[] = [];
   try {
     const q = query(
       collection(db, COLLECTIONS.marketplaceListings),
@@ -182,7 +206,7 @@ export async function listMarketplaceListings(max = 100): Promise<Campaign[]> {
       const c = (s.data() as { campaign?: Campaign }).campaign;
       if (c && typeof c.id === 'string') out.push(c);
     });
-    return out;
+    result = out;
   } catch {
     const snap = await getDocs(query(collection(db, COLLECTIONS.marketplaceListings), limit(max)));
     const out: Campaign[] = [];
@@ -190,12 +214,18 @@ export async function listMarketplaceListings(max = 100): Promise<Campaign[]> {
       const c = (s.data() as { campaign?: Campaign }).campaign;
       if (c && typeof c.id === 'string') out.push(c);
     });
-    return out.sort((a, b) => (a.title > b.title ? 1 : -1));
+    result = out.sort((a, b) => (a.title > b.title ? 1 : -1));
   }
+
+  firestoreCache.marketplaceListings = { data: result, timestamp: now };
+  return result;
 }
 
 /** Brand publishes or updates a listing (document id = campaign id). */
 export async function upsertMarketplaceListing(brandId: string, campaign: Campaign): Promise<void> {
+  // Invalidate read cache on new publications/updates
+  delete firestoreCache.marketplaceListings;
+
   if (!db) return;
   await setDoc(
     doc(db, COLLECTIONS.marketplaceListings, campaign.id),
@@ -209,20 +239,36 @@ export async function upsertMarketplaceListing(brandId: string, campaign: Campai
 }
 
 export async function removeMarketplaceListing(campaignId: string): Promise<void> {
+  // Invalidate read cache on listing deletions
+  delete firestoreCache.marketplaceListings;
+
   if (!db) return;
   await deleteDoc(doc(db, COLLECTIONS.marketplaceListings, campaignId));
 }
 
 /** Creator profiles visible to signed-in brands (respects Firestore rules: any auth may read). */
-export async function listPublicInfluencerProfiles(max = 80): Promise<Influencer[]> {
+export async function listPublicInfluencerProfiles(max = 80, forceRefresh = false): Promise<Influencer[]> {
+  const now = Date.now();
+  if (!forceRefresh && firestoreCache.influencerProfiles && (now - firestoreCache.influencerProfiles.timestamp < CACHE_TTL_MS)) {
+    return firestoreCache.influencerProfiles.data;
+  }
+
   if (!db) return [];
-  const q = query(collection(db, COLLECTIONS.profiles), where('role', '==', 'INFLUENCER'), limit(max));
-  const snap = await getDocs(q);
-  const out: Influencer[] = [];
-  snap.forEach((s) => {
-    const p = mapProfileDoc(s.id, s.data() as Record<string, unknown>);
-    const inf = p ? profileToInfluencer(p) : null;
-    if (inf) out.push(inf);
-  });
-  return out;
+  let result: Influencer[] = [];
+  try {
+    const q = query(collection(db, COLLECTIONS.profiles), where('role', '==', 'INFLUENCER'), limit(max));
+    const snap = await getDocs(q);
+    const out: Influencer[] = [];
+    snap.forEach((s) => {
+      const p = mapProfileDoc(s.id, s.data() as Record<string, unknown>);
+      const inf = p ? profileToInfluencer(p) : null;
+      if (inf) out.push(inf);
+    });
+    result = out;
+  } catch {
+    result = [];
+  }
+
+  firestoreCache.influencerProfiles = { data: result, timestamp: now };
+  return result;
 }

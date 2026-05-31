@@ -250,6 +250,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const firebaseUidRef = useRef<string | null>(null);
   const pendingOAuthRoleRef = useRef<UserRole | null>(null);
+  const lastWrittenDataRef = useRef<string>('');
 
   const useFirebaseAuth = isFirebaseConfigured();
   const needsEmailVerification =
@@ -439,14 +440,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     if (!useFirebaseAuth || !firebaseUidRef.current) return;
     const uid = firebaseUidRef.current;
+
+    const payload = {
+      campaigns,
+      transactions,
+      walletBalance,
+      escrowBalance,
+      notifications,
+    };
+
+    const payloadStr = JSON.stringify(payload);
+    // Skip Firestore writes if the payload is identical to the last written data
+    if (payloadStr === lastWrittenDataRef.current) return;
+
     const t = window.setTimeout(() => {
-      void upsertUserData(uid, {
-        campaigns,
-        transactions,
-        walletBalance,
-        escrowBalance,
-        notifications,
-      });
+      lastWrittenDataRef.current = payloadStr;
+      void upsertUserData(uid, payload);
     }, 400);
     return () => window.clearTimeout(t);
   }, [useFirebaseAuth, campaigns, transactions, walletBalance, escrowBalance, notifications]);
