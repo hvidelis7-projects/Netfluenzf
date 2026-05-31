@@ -28,33 +28,31 @@ const Auth: React.FC = () => {
     setIsLoading(true);
     playSound('click');
 
-    if (useFirebaseAuth) {
-      if (isLogin) {
-        const { error } = await authSignIn(email, password);
-        setIsLoading(false);
-        if (error) {
-          setFormError(error);
-          playSound('click');
-          return;
-        }
-        playSound('success');
-        navigate(from, { replace: true });
-        return;
-      }
-      const { error } = await authSignUp(email, password, selectedRole);
+    if (isLogin) {
+      const { error } = await authSignIn(email, password);
       setIsLoading(false);
       if (error) {
         setFormError(error);
+        playSound('click');
         return;
       }
       playSound('success');
-      navigate('/verify-email', { replace: true, state: { next: '/onboarding' } });
+      navigate(from, { replace: true });
       return;
     }
-
+    const { error } = await authSignUp(email, password, selectedRole);
     setIsLoading(false);
-    setFormError('Sign-in is not available on this deployment yet. Please try again later or contact the team that runs this site.');
-    playSound('click');
+    if (error) {
+      setFormError(error);
+      return;
+    }
+    playSound('success');
+    if (useFirebaseAuth) {
+      navigate('/verify-email', { replace: true, state: { next: '/onboarding' } });
+    } else {
+      navigate('/onboarding', { replace: true });
+    }
+    return;
   };
 
   const handleGoogle = async () => {
@@ -98,12 +96,12 @@ const Auth: React.FC = () => {
       <div className="w-full max-w-md bg-white/60 backdrop-blur-xl border border-white/50 p-8 rounded-[2.5rem] shadow-2xl animate-in fade-in zoom-in duration-500">
         {!useFirebaseAuth && (
           <div
-            className="mb-6 rounded-2xl border border-amber-200/80 bg-amber-50/90 px-4 py-3 text-center"
+            className="mb-6 rounded-2xl border border-brand/20 bg-brand/5 px-4 py-3 text-center"
             role="status"
           >
-            <p className="text-[10px] font-black uppercase tracking-widest text-amber-900/90">Sign-in unavailable</p>
-            <p className="mt-1 text-xs font-medium leading-snug text-amber-950/80">
-              This app has not finished setup yet. Try again later, or contact whoever runs this site if you need access.
+            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF5500]">Demo Mode Active</p>
+            <p className="mt-1 text-[11px] font-medium leading-normal text-gray-700">
+              Firebase is not configured. Log in with <span className="font-bold">brand@trifluenz.com</span> or <span className="font-bold">creator@trifluenz.com</span> (password: <span className="font-bold">password123</span>) or register a new local account!
             </p>
           </div>
         )}

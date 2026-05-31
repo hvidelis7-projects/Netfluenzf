@@ -28,6 +28,139 @@ import {
   upsertMarketplaceListing,
 } from '../services/firestoreData';
 
+const DEFAULT_AVATAR_BRAND = 'https://images.unsplash.com/photo-1559526323-cb2f2fe2591b?auto=format&fit=crop&q=80&w=200';
+const DEFAULT_AVATAR_CREATOR = 'https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?auto=format&fit=crop&q=80&w=200';
+
+const MOCK_INFLUENCERS: Influencer[] = [
+  {
+    id: 'mock_creator_1',
+    role: UserRole.INFLUENCER,
+    name: 'Wanjiku Kamau',
+    email: 'wanjiku@example.com',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
+    bio: 'Lifestyle & travel photographer based in Nairobi. Sharing the beauty of East Africa through my lens.',
+    location: 'Nairobi, Kenya',
+    verified: true,
+    niche: ['Travel', 'Photography', 'Lifestyle'],
+    followers: 48500,
+    engagementRate: 5.8,
+    rating: 4.9,
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600',
+    trustScore: 92,
+    joinedDate: '2025-01-10'
+  },
+  {
+    id: 'mock_creator_2',
+    role: UserRole.INFLUENCER,
+    name: 'Jomo Omondi',
+    email: 'jomo@example.com',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
+    bio: 'Tech enthusiast and fintech reviewer. Simplifying complex tech for everyday users.',
+    location: 'Mombasa, Kenya',
+    verified: true,
+    niche: ['Tech', 'Finance', 'Education'],
+    followers: 120000,
+    engagementRate: 4.2,
+    rating: 4.8,
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600',
+    trustScore: 89,
+    joinedDate: '2025-03-15'
+  },
+  {
+    id: 'mock_creator_3',
+    role: UserRole.INFLUENCER,
+    name: 'Amina Yusuf',
+    email: 'amina@example.com',
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200',
+    bio: 'Beauty therapist and natural hair advocate. Empowering women to embrace their natural glow.',
+    location: 'Nairobi, Kenya',
+    verified: false,
+    niche: ['Beauty', 'Wellness', 'Fashion'],
+    followers: 24000,
+    engagementRate: 7.1,
+    rating: 4.7,
+    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=600',
+    trustScore: 78,
+    joinedDate: '2025-02-20'
+  }
+];
+
+const MOCK_MARKETPLACE_CAMPAIGNS: Campaign[] = [
+  {
+    id: 'camp_mock_1',
+    title: 'Safari Lifestyle Shoot',
+    brand: 'Nairobi Threads',
+    budget: 45000,
+    niche: 'Fashion & Lifestyle',
+    status: 'active',
+    description: 'Looking for lifestyle creators to showcase our new summer collection in beautiful outdoor settings around Nairobi.',
+    platform: 'Instagram',
+    escrowStatus: 'funded',
+    deliverables: [
+      { id: 'del_1', type: 'Post', description: '1 Carousel post showing 3 outfits', platform: 'Instagram', status: 'pending', dueDate: '2026-06-15' },
+      { id: 'del_2', type: 'Story', description: '1 Story series with swipe-up/link', platform: 'Instagram', status: 'pending', dueDate: '2026-06-16' }
+    ]
+  },
+  {
+    id: 'camp_mock_2',
+    title: 'Fintech App Walkthrough',
+    brand: 'LipaSafe',
+    budget: 85000,
+    niche: 'Tech & Finance',
+    status: 'active',
+    description: 'Create an engaging walkthrough video explaining how LipaSafe secure payments work for everyday merchants.',
+    platform: 'TikTok',
+    escrowStatus: 'funded',
+    deliverables: [
+      { id: 'del_3', type: 'Video', description: '1 TikTok tutorial video (60s)', platform: 'TikTok', status: 'pending', dueDate: '2026-06-20' }
+    ]
+  },
+  {
+    id: 'camp_mock_3',
+    title: 'Organic Skincare Review',
+    brand: 'Sana Naturals',
+    budget: 32000,
+    niche: 'Beauty & Wellness',
+    status: 'active',
+    description: 'Seeking authentic beauty creators to review our organic skincare line over a 7-day period.',
+    platform: 'Multi',
+    escrowStatus: 'funded',
+    deliverables: [
+      { id: 'del_4', type: 'Reel', description: '1 Before/After Reel', platform: 'Instagram', status: 'pending', dueDate: '2026-06-10' },
+      { id: 'del_5', type: 'Tweet', description: '1 Thread with routine details', platform: 'X', status: 'pending', dueDate: '2026-06-11' }
+    ]
+  }
+];
+
+const INITIAL_MOCK_PROFILES: Record<string, UserProfile> = {
+  'mock_brand_id': {
+    id: 'mock_brand_id',
+    role: UserRole.BRAND,
+    name: 'Nairobi Threads',
+    email: 'brand@trifluenz.com',
+    avatar: DEFAULT_AVATAR_BRAND,
+    bio: 'Premium streetwear and lifestyle apparel brand in Kenya.',
+    location: 'Nairobi, Kenya',
+    verified: true,
+    industry: 'Fashion',
+    website: 'https://nairobi-threads.example.com',
+    budgetRange: 'KSh 10,000 - KSh 100,000'
+  },
+  'mock_creator_id': {
+    id: 'mock_creator_id',
+    role: UserRole.INFLUENCER,
+    name: 'Wanjiku Kamau',
+    email: 'creator@trifluenz.com',
+    avatar: DEFAULT_AVATAR_CREATOR,
+    bio: 'Lifestyle & travel photographer based in Nairobi.',
+    location: 'Nairobi, Kenya',
+    verified: true,
+    niche: ['Travel', 'Lifestyle'],
+    followers: 48500,
+    engagementRate: 5.8,
+  }
+};
+
 interface AppContextType {
   user: UserProfile | null;
   isAuthenticated: boolean;
@@ -145,6 +278,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setAvailableInfluencers([]);
       return;
     }
+
+    if (!useFirebaseAuth) {
+      setMarketplaceCampaigns(MOCK_MARKETPLACE_CAMPAIGNS);
+      if (profile?.role === UserRole.BRAND) {
+        setAvailableInfluencers(MOCK_INFLUENCERS);
+      } else {
+        setAvailableInfluencers([]);
+      }
+      return;
+    }
+
     try {
       const listings = await listMarketplaceListings();
       setMarketplaceCampaigns(listings);
@@ -161,7 +305,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } else {
       setAvailableInfluencers([]);
     }
-  }, []);
+  }, [useFirebaseAuth]);
 
   const hydrateFromFirebaseUser = useCallback(
     async (fbUser: FirebaseUser | null) => {
@@ -228,6 +372,59 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     [applyAuthSession, hydrateDiscovery]
   );
 
+  // 1. Seed initial mock profiles if not present
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!localStorage.getItem('trifluenz_mock_profiles')) {
+      localStorage.setItem('trifluenz_mock_profiles', JSON.stringify(INITIAL_MOCK_PROFILES));
+    }
+  }, []);
+
+  // 2. Load mock session on mount if not using Firebase
+  useEffect(() => {
+    if (useFirebaseAuth) return;
+    const savedSession = localStorage.getItem('trifluenz_mock_session');
+    if (savedSession) {
+      try {
+        const { userId } = JSON.parse(savedSession);
+        const allProfiles = JSON.parse(localStorage.getItem('trifluenz_mock_profiles') || '{}');
+        const profile = allProfiles[userId];
+        if (profile) {
+          setUser(profile);
+          setRole(profile.role);
+          const allData = JSON.parse(localStorage.getItem('trifluenz_mock_userdata') || '{}');
+          const userData = allData[userId] || emptyGuestAccount;
+          setCampaigns(userData.campaigns || []);
+          setTransactions(userData.transactions || []);
+          setWalletBalance(userData.walletBalance || 0);
+          setEscrowBalance(userData.escrowBalance || 0);
+          setNotifications(userData.notifications || []);
+        }
+      } catch (e) {
+        console.error('Failed to parse mock session', e);
+      }
+    }
+  }, [useFirebaseAuth]);
+
+  // 3. Persist mock data when state changes
+  useEffect(() => {
+    if (useFirebaseAuth || !user || !user.id.startsWith('mock_')) return;
+    const uid = user.id;
+    const t = window.setTimeout(() => {
+      const allData = JSON.parse(localStorage.getItem('trifluenz_mock_userdata') || '{}');
+      allData[uid] = {
+        campaigns,
+        transactions,
+        walletBalance,
+        escrowBalance,
+        notifications,
+      };
+      localStorage.setItem('trifluenz_mock_userdata', JSON.stringify(allData));
+    }, 400);
+    return () => window.clearTimeout(t);
+  }, [useFirebaseAuth, user, campaigns, transactions, walletBalance, escrowBalance, notifications]);
+
+  // 4. Firebase auth state listener
   useEffect(() => {
     if (!auth) return;
 
@@ -238,6 +435,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => unsub();
   }, [hydrateFromFirebaseUser]);
 
+  // 5. Firebase updates persistence
   useEffect(() => {
     if (!useFirebaseAuth || !firebaseUidRef.current) return;
     const uid = firebaseUidRef.current;
@@ -254,6 +452,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [useFirebaseAuth, campaigns, transactions, walletBalance, escrowBalance, notifications]);
 
   const authSignIn = async (email: string, password: string): Promise<{ error: string | null }> => {
+    if (!useFirebaseAuth) {
+      const allProfiles = JSON.parse(localStorage.getItem('trifluenz_mock_profiles') || '{}');
+      const foundProfile = Object.values(allProfiles).find((p: any) => p.email.toLowerCase() === email.toLowerCase()) as UserProfile | undefined;
+      
+      if (!foundProfile) {
+        return { error: 'No account found with this email. You can register a new one!' };
+      }
+      
+      setUser(foundProfile);
+      setRole(foundProfile.role);
+      
+      const allData = JSON.parse(localStorage.getItem('trifluenz_mock_userdata') || '{}');
+      const userData = allData[foundProfile.id] || emptyGuestAccount;
+      setCampaigns(userData.campaigns || []);
+      setTransactions(userData.transactions || []);
+      setWalletBalance(userData.walletBalance || 0);
+      setEscrowBalance(userData.escrowBalance || 0);
+      setNotifications(userData.notifications || []);
+      
+      localStorage.setItem('trifluenz_mock_session', JSON.stringify({ userId: foundProfile.id }));
+      await hydrateDiscovery(true, foundProfile);
+      return { error: null };
+    }
+
     if (!auth) return { error: 'Firebase Auth is not configured.' };
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -269,6 +491,43 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     password: string,
     selectedRole: UserRole
   ): Promise<{ error: string | null }> => {
+    if (!useFirebaseAuth) {
+      const allProfiles = JSON.parse(localStorage.getItem('trifluenz_mock_profiles') || '{}');
+      const emailExists = Object.values(allProfiles).some((p: any) => p.email.toLowerCase() === email.toLowerCase());
+      
+      if (emailExists) {
+        return { error: 'An account with this email already exists.' };
+      }
+      
+      const mockUid = 'mock_' + Math.random().toString(36).substr(2, 9);
+      const displayName = email.split('@')[0] || 'User';
+      const newProfile: UserProfile = {
+        id: mockUid,
+        role: selectedRole,
+        name: displayName,
+        email,
+        avatar: selectedRole === UserRole.BRAND ? DEFAULT_AVATAR_BRAND : DEFAULT_AVATAR_CREATOR,
+        verified: false,
+        bio: 'Self-described profile bio.',
+        location: 'Nairobi, Kenya',
+      };
+      
+      allProfiles[mockUid] = newProfile;
+      localStorage.setItem('trifluenz_mock_profiles', JSON.stringify(allProfiles));
+      
+      setUser(newProfile);
+      setRole(selectedRole);
+      setCampaigns([]);
+      setTransactions([]);
+      setWalletBalance(0);
+      setEscrowBalance(0);
+      setNotifications([]);
+      
+      localStorage.setItem('trifluenz_mock_session', JSON.stringify({ userId: mockUid }));
+      await hydrateDiscovery(true, newProfile);
+      return { error: null };
+    }
+
     if (!auth) return { error: 'Firebase Auth is not configured.' };
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
@@ -294,6 +553,43 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     isRegister: boolean,
     roleForNewAccount: UserRole
   ): Promise<{ error: string | null }> => {
+    if (!useFirebaseAuth) {
+      const mockUid = 'mock_google_id';
+      const email = 'google.user@example.com';
+      const allProfiles = JSON.parse(localStorage.getItem('trifluenz_mock_profiles') || '{}');
+      let foundProfile = allProfiles[mockUid];
+      
+      if (!foundProfile) {
+        foundProfile = {
+          id: mockUid,
+          role: roleForNewAccount,
+          name: 'Google User',
+          email,
+          avatar: roleForNewAccount === UserRole.BRAND ? DEFAULT_AVATAR_BRAND : DEFAULT_AVATAR_CREATOR,
+          verified: true,
+          bio: 'Verified Google sign-in demo account.',
+          location: 'Nairobi, Kenya',
+        };
+        allProfiles[mockUid] = foundProfile;
+        localStorage.setItem('trifluenz_mock_profiles', JSON.stringify(allProfiles));
+      }
+      
+      setUser(foundProfile);
+      setRole(foundProfile.role);
+      
+      const allData = JSON.parse(localStorage.getItem('trifluenz_mock_userdata') || '{}');
+      const userData = allData[mockUid] || emptyGuestAccount;
+      setCampaigns(userData.campaigns || []);
+      setTransactions(userData.transactions || []);
+      setWalletBalance(userData.walletBalance || 0);
+      setEscrowBalance(userData.escrowBalance || 0);
+      setNotifications(userData.notifications || []);
+      
+      localStorage.setItem('trifluenz_mock_session', JSON.stringify({ userId: mockUid }));
+      await hydrateDiscovery(true, foundProfile);
+      return { error: null };
+    }
+
     if (!auth) return { error: 'Firebase Auth is not configured.' };
     try {
       pendingOAuthRoleRef.current = isRegister ? roleForNewAccount : null;
@@ -339,6 +635,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const logout = useCallback(async () => {
     clearPersistedSession();
+    if (!useFirebaseAuth) {
+      localStorage.removeItem('trifluenz_mock_session');
+    }
     if (auth) {
       await signOut(auth);
     }
@@ -353,12 +652,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setWalletBalance(0);
     setEscrowBalance(0);
     setNotifications([]);
-  }, []);
+  }, [useFirebaseAuth]);
 
   const updateUserProfile = (updates: Partial<UserProfile>) => {
     if (user) {
-      setUser({ ...user, ...updates });
-      if (useFirebaseAuth && firebaseUidRef.current) {
+      const updatedUser = { ...user, ...updates };
+      setUser(updatedUser);
+      if (!useFirebaseAuth) {
+        const allProfiles = JSON.parse(localStorage.getItem('trifluenz_mock_profiles') || '{}');
+        allProfiles[user.id] = updatedUser;
+        localStorage.setItem('trifluenz_mock_profiles', JSON.stringify(allProfiles));
+      } else if (useFirebaseAuth && firebaseUidRef.current) {
         const uid = firebaseUidRef.current;
         const fs: Partial<{ displayName: string; avatarUrl: string; email: string; verified: boolean }> = {};
         if (updates.name !== undefined) fs.displayName = updates.name;
