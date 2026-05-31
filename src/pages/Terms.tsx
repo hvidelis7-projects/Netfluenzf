@@ -5,7 +5,7 @@ import { LegalPage } from './LegalPage';
 const Terms: React.FC = () => (
   <LegalPage title="Terms of use">
     <p>
-      These Terms govern access to Netfluenz and the Netfluenz marketing site and application. By using the
+      These Terms govern access to Trifluenz and the Trifluenz marketing site and application. By using the
       service, you agree to these Terms. If you do not agree, do not use the service.
     </p>
     <p>
@@ -15,14 +15,14 @@ const Terms: React.FC = () => (
     </p>
     <p>
       <strong>Accounts.</strong> You are responsible for your credentials and for activity under your account. Notify
-      Netfluenz promptly of unauthorized use.
+      Trifluenz promptly of unauthorized use.
     </p>
     <p>
-      <strong>Content.</strong> You retain rights to content you submit. You grant Netfluenz a licence to host, display, and
+      <strong>Content.</strong> You retain rights to content you submit. You grant Trifluenz a licence to host, display, and
       process that content to operate the service.
     </p>
     <p>
-      <strong>Disclaimers.</strong> The service is provided “as is” to the maximum extent permitted by law. Netfluenz disclaims
+      <strong>Disclaimers.</strong> The service is provided “as is” to the maximum extent permitted by law. Trifluenz disclaims
       implied warranties where allowed.
     </p>
     <p>

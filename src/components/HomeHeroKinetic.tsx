@@ -53,7 +53,7 @@ export const HomeHeroKinetic: React.FC<HomeHeroKineticProps> = ({ onPrimaryCta }
       animate="show"
     >
       <motion.p variants={item} className="font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-white/55">
-        Netfluenz
+        Trifluenz
       </motion.p>
 
       <motion.div variants={item} className="h-px max-w-[4.5rem] bg-gradient-to-r from-white/50 to-transparent" aria-hidden />

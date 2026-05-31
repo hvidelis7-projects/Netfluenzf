@@ -6,8 +6,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import { NetfluenzLogo, APP_SHELL_BACKGROUND, PwaDownloadIcon } from '../constants';
+import { TrifluenzLogo, APP_SHELL_BACKGROUND, PwaDownloadIcon } from '../constants';
 import HomeHeroBackground from './HomeHeroBackground';
+import { HomeHeroCarouselProvider } from '../context/HomeHeroCarouselContext';
 import { UserRole } from '../types';
 import { playSound } from '../audio.ts';
 import { useApp } from '../context/AppContext';
@@ -92,6 +93,22 @@ const Layout: React.FC = () => {
     action();
   };
 
+  const scrollToHomeSection = (sectionId: string) => {
+    handleNavClick(() => {
+      setIsMobileMenuOpen(false);
+      if (location.pathname !== '/') {
+        navigate(`/#${sectionId}`);
+        return;
+      }
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+
+  const homeAnchorClass = (hero: boolean) =>
+    `text-[10px] font-black uppercase tracking-widest transition-colors rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+      hero ? 'text-white/85 hover:text-white focus-visible:outline-white' : 'text-gray-900 hover:text-brand focus-visible:outline-brand'
+    }`;
+
   const isHomePage = currentPage === 'home';
   /** Translucent dark nav over hero photography (readable + premium). */
   const navGlassHero = isHomePage && !scrolled && !isMobileMenuOpen;
@@ -104,6 +121,7 @@ const Layout: React.FC = () => {
   };
 
   return (
+    <HomeHeroCarouselProvider>
     <div className="min-h-screen flex flex-col selection:bg-[#FF5500] selection:text-white relative">
       <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
         {isHomePage ? (
@@ -165,9 +183,9 @@ const Layout: React.FC = () => {
               }`}
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              <NetfluenzLogo className="w-8 h-8 md:w-10 md:h-10" />
+              <TrifluenzLogo className="w-8 h-8 md:w-10 md:h-10" />
               <div className="flex flex-col">
-                <span className="text-xl font-black brand-text serif uppercase leading-none tracking-tight">Netfluenz</span>
+                <span className="text-xl font-black brand-text serif uppercase leading-none tracking-tight">Trifluenz</span>
                 <span
                   className={`text-[7px] uppercase tracking-widest font-black ${navGlassHero ? 'text-white/50' : 'text-gray-900'}`}
                 >
@@ -221,7 +239,25 @@ const Layout: React.FC = () => {
                 </button>
               )}
               {role === UserRole.GUEST ? (
-                <div className="flex items-center space-x-6">
+                <div className="flex items-center space-x-8">
+                  {isHomePage && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => scrollToHomeSection('for-brands')}
+                        className={homeAnchorClass(navGlassHero)}
+                      >
+                        Brands
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => scrollToHomeSection('for-creators')}
+                        className={homeAnchorClass(navGlassHero)}
+                      >
+                        Creators
+                      </button>
+                    </>
+                  )}
                   <button
                     type="button"
                     onClick={() => handleNavClick(() => navigate('/auth'))}
@@ -437,6 +473,26 @@ const Layout: React.FC = () => {
                         aria-hidden
                       />
                     </button>
+                    {isHomePage && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => scrollToHomeSection('for-brands')}
+                          className="group flex w-full items-center justify-between rounded-2xl border border-white/90 bg-white/80 px-5 py-[1.125rem] text-left shadow-[0_2px_16px_-6px_rgba(0,0,0,0.06),inset_0_1px_0_0_rgba(255,255,255,1)] transition-all duration-300 hover:border-brand/25 hover:shadow-[0_12px_40px_-16px_rgba(255,85,0,0.22)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-[0.99] motion-reduce:transition-none"
+                        >
+                          <span className="text-[15px] font-semibold tracking-tight text-gray-900">For brands</span>
+                          <ChevronRight className="h-5 w-5 shrink-0 text-brand/50" strokeWidth={2} aria-hidden />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => scrollToHomeSection('for-creators')}
+                          className="group flex w-full items-center justify-between rounded-2xl border border-white/90 bg-white/80 px-5 py-[1.125rem] text-left shadow-[0_2px_16px_-6px_rgba(0,0,0,0.06),inset_0_1px_0_0_rgba(255,255,255,1)] transition-all duration-300 hover:border-brand/25 hover:shadow-[0_12px_40px_-16px_rgba(255,85,0,0.22)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-[0.99] motion-reduce:transition-none"
+                        >
+                          <span className="text-[15px] font-semibold tracking-tight text-gray-900">For creators</span>
+                          <ChevronRight className="h-5 w-5 shrink-0 text-brand/50" strokeWidth={2} aria-hidden />
+                        </button>
+                      </>
+                    )}
                     <button
                       type="button"
                       onClick={() => handleNavClick(() => { navigate('/auth'); setIsMobileMenuOpen(false); })}
@@ -512,7 +568,7 @@ const Layout: React.FC = () => {
                   <div className="mt-6 pt-6 border-t border-white/60">
                     <div className="rounded-2xl bg-gradient-to-br from-brand/10 to-amber-500/5 border border-brand/20 p-4 flex flex-col items-center text-center shadow-inner">
                       <PwaDownloadIcon className="w-12 h-12 mb-2 animate-pulse" />
-                      <h4 className="text-xs font-black uppercase tracking-wider text-gray-900 leading-none">Netfluenz Mobile</h4>
+                      <h4 className="text-xs font-black uppercase tracking-wider text-gray-900 leading-none">Trifluenz Mobile</h4>
                       <p className="text-[9px] font-medium text-gray-600 mt-1.5 mb-3">Install on your home screen for rapid offline access.</p>
                       <button
                         type="button"
@@ -528,7 +584,7 @@ const Layout: React.FC = () => {
             </div>
 
             <p className="mt-auto pt-10 text-center text-[9px] font-semibold uppercase tracking-[0.35em] text-gray-400">
-              Netfluenz
+              Trifluenz
             </p>
           </div>
         </div>
@@ -536,8 +592,8 @@ const Layout: React.FC = () => {
         <footer className="mt-auto border-t border-white/50 bg-gradient-to-b from-white/50 via-orange-50/15 to-[#FFF8F3] px-6 pb-10 pt-16 shadow-[0_-12px_48px_-28px_rgba(255,85,0,0.08)] backdrop-blur-xl">
           <div className="max-w-7xl mx-auto space-y-12">
             <div className="flex flex-col items-center space-y-4">
-              <NetfluenzLogo className="w-12 h-12" />
-              <h4 className="text-xl font-black brand-text serif italic uppercase">Netfluenz</h4>
+              <TrifluenzLogo className="w-12 h-12" />
+              <h4 className="text-xl font-black brand-text serif italic uppercase">Trifluenz</h4>
               <p className="text-gray-800 text-[10px] font-black uppercase tracking-widest text-center">
                 Built to power global creator growth
               </p>
@@ -554,7 +610,7 @@ const Layout: React.FC = () => {
               </Link>
             </nav>
             <div className="text-[8px] font-black text-gray-600 uppercase tracking-widest text-center">
-              © 2026 Netfluenz. Structured influence, measurable growth.
+              © 2026 Trifluenz. Structured influence, measurable growth.
             </div>
           </div>
         </footer>
@@ -569,7 +625,7 @@ const Layout: React.FC = () => {
                 <PwaDownloadIcon className="w-8 h-8 animate-pulse" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-black uppercase tracking-wider text-gray-900 leading-none">Install Netfluenz App</span>
+                <span className="text-[10px] font-black uppercase tracking-wider text-gray-900 leading-none">Install Trifluenz App</span>
                 <span className="text-[8px] font-semibold text-gray-600 mt-0.5 leading-snug">Tap to install for pure mobile speed!</span>
               </div>
             </div>
@@ -607,7 +663,7 @@ const Layout: React.FC = () => {
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center space-x-3">
                 <PwaDownloadIcon className="w-8 h-8" />
-                <h3 className="text-sm font-black uppercase tracking-wider text-gray-900 serif italic">Install Netfluenz App</h3>
+                <h3 className="text-sm font-black uppercase tracking-wider text-gray-900 serif italic">Install Trifluenz App</h3>
               </div>
               <button
                 type="button"
@@ -622,7 +678,7 @@ const Layout: React.FC = () => {
             </div>
 
             <p className="text-xs text-gray-600 mb-6 font-medium leading-relaxed">
-              Safari on iOS does not support automatic one-click installation. You can easily add Netfluenz to your home screen manually in <span className="font-bold text-gray-900">3 simple steps</span>:
+              Safari on iOS does not support automatic one-click installation. You can easily add Trifluenz to your home screen manually in <span className="font-bold text-gray-900">3 simple steps</span>:
             </p>
 
             <div className="space-y-4">
@@ -662,6 +718,7 @@ const Layout: React.FC = () => {
         </div>
       )}
     </div>
+    </HomeHeroCarouselProvider>
   );
 };
 

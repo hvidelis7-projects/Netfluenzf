@@ -33,7 +33,7 @@ const Profile: React.FC = () => {
 
   const handleShareMediaKit = () => {
     playSound('click');
-    const url = `https://netfluenz.app/u/${user.id}`;
+    const url = `https://trifluenz.app/u/${user.id}`;
     void navigator.clipboard.writeText(url).then(
       () => addNotification('Media kit link copied to clipboard'),
       () => addNotification(url)
@@ -65,7 +65,7 @@ const Profile: React.FC = () => {
     }
     try {
       if (isCloudinaryConfigured()) {
-        const { url } = await uploadToCloudinary(file, { folder: 'netfluenz/portfolio', resourceType: 'image' });
+        const { url } = await uploadToCloudinary(file, { folder: 'trifluenz/portfolio', resourceType: 'image' });
         const next = [...(user.portfolio || []), url];
         updateUserProfile({ portfolio: next });
         addNotification('Image uploaded to your portfolio');
@@ -108,7 +108,7 @@ const Profile: React.FC = () => {
     setAvatarBusy(true);
     try {
       if (isCloudinaryConfigured()) {
-        const { url } = await uploadToCloudinary(file, { folder: 'netfluenz/avatars', resourceType: 'image' });
+        const { url } = await uploadToCloudinary(file, { folder: 'trifluenz/avatars', resourceType: 'image' });
         handleChange('avatar', url);
         addNotification('Profile photo uploaded');
         playSound('success');
@@ -148,7 +148,7 @@ const Profile: React.FC = () => {
         <div className="space-y-1">
           <h1 className="text-4xl md:text-5xl font-black serif italic brand-text tracking-tighter uppercase leading-none">Your profile</h1>
           <p className="text-gray-900 font-medium text-sm italic bg-white/30 inline-block px-3 py-1 rounded-full backdrop-blur-sm">
-            Update how others see you on Netfluenz.
+            Update how others see you on Trifluenz.
           </p>
         </div>
         <div className="flex gap-2">

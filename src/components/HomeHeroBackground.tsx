@@ -4,13 +4,16 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import { HOME_HERO_BACKGROUNDS } from '../constants';
+import { useHomeHeroCarouselOptional } from '../context/HomeHeroCarouselContext';
 
 const ROTATION_MS = 6000;
 
 const HomeHeroBackground: React.FC = () => {
-  const [index, setIndex] = useState(0);
+  const carousel = useHomeHeroCarouselOptional();
+  const [localIndex, setLocalIndex] = useState(0);
+  const index = carousel?.index ?? localIndex;
+  const setIndex = carousel?.setIndex ?? setLocalIndex;
   const [reduceMotion, setReduceMotion] = useState(false);
 
   useEffect(() => {
@@ -47,23 +50,6 @@ const HomeHeroBackground: React.FC = () => {
           />
         );
       })}
-      {typeof document !== 'undefined' &&
-        createPortal(
-          <div
-            className="fixed bottom-8 left-1/2 z-[40] flex -translate-x-1/2 gap-2 pointer-events-none md:bottom-10"
-            aria-hidden
-          >
-            {HOME_HERO_BACKGROUNDS.map((_, i) => (
-              <span
-                key={i}
-                className={`h-1.5 rounded-full shadow-sm transition-all duration-500 ${
-                  i === index ? 'w-8 bg-white' : 'w-1.5 bg-white/45'
-                }`}
-              />
-            ))}
-          </div>,
-          document.body
-        )}
     </>
   );
 };

@@ -5,11 +5,11 @@ import { LegalPage } from './LegalPage';
 const Privacy: React.FC = () => (
   <LegalPage title="Privacy policy">
     <p>
-      This policy describes how Netfluenz handles information in connection with the Kenya-focused creator marketplace
+      This policy describes how Trifluenz handles information in connection with the Kenya-focused creator marketplace
       experience.
     </p>
     <p>
-      <strong>What Netfluenz collects.</strong> Netfluenz may collect account details (such as email and role), usage data, device and
+      <strong>What Trifluenz collects.</strong> Trifluenz may collect account details (such as email and role), usage data, device and
       log data, and content you submit (briefs, messages, deliverable links).
     </p>
     <p>

@@ -3,10 +3,10 @@
  * Active sessions are owned by Firebase Auth + Firestore.
  */
 
-export const SESSION_STORAGE_KEY = 'netfluenz_session_v1';
+export const SESSION_STORAGE_KEY = 'trifluenz_session_v1';
 
 /** Reserved for optional route restoration; cleared with the session key. */
-export const PAGE_STORAGE_KEY = 'netfluenz_current_page';
+export const PAGE_STORAGE_KEY = 'trifluenz_current_page';
 
 export function clearPersistedSession(): void {
   if (typeof window === 'undefined') return;

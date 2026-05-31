@@ -2,7 +2,7 @@
  * Global styles: Tailwind layers, design tokens, glass UI, brand button, marquee.
  * Fonts are loaded from Google Fonts in `index.html`.
  *
- * Design principles (Netfluenz)
+ * Design principles (Trifluenz)
  * — Tokens: use CSS variables for brand, text, and glass (--brand, --text-main, --text-muted, etc.).
  * — Typography: Playfair Display for display headings (h1–h3, .serif); Plus Jakarta Sans for UI/body (weights in `index.html`).
  * — Color hierarchy: primary text = --text-main; supporting copy = --text-muted; accents = brand gradient (.brand-text) or solid brand.
@@ -160,32 +160,36 @@ body::before {
 
 .home-brand > section.home-section-reveal {
   opacity: 0;
+  transform: translate3d(0, 14px, 0);
+}
+
+.home-brand > section.home-section-reveal.is-visible {
   animation: home-section-enter 0.68s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.home-brand > section.home-section-reveal:nth-of-type(2) {
-  animation-delay: 0.05s;
+.home-brand > section.home-section-reveal.is-visible:nth-of-type(2) {
+  animation-delay: 0.04s;
 }
-.home-brand > section.home-section-reveal:nth-of-type(3) {
-  animation-delay: 0.1s;
+.home-brand > section.home-section-reveal.is-visible:nth-of-type(3) {
+  animation-delay: 0.08s;
 }
-.home-brand > section.home-section-reveal:nth-of-type(4) {
-  animation-delay: 0.15s;
+.home-brand > section.home-section-reveal.is-visible:nth-of-type(4) {
+  animation-delay: 0.12s;
 }
-.home-brand > section.home-section-reveal:nth-of-type(5) {
+.home-brand > section.home-section-reveal.is-visible:nth-of-type(5) {
+  animation-delay: 0.16s;
+}
+.home-brand > section.home-section-reveal.is-visible:nth-of-type(6) {
   animation-delay: 0.2s;
 }
-.home-brand > section.home-section-reveal:nth-of-type(6) {
-  animation-delay: 0.25s;
+.home-brand > section.home-section-reveal.is-visible:nth-of-type(7) {
+  animation-delay: 0.24s;
 }
-.home-brand > section.home-section-reveal:nth-of-type(7) {
-  animation-delay: 0.3s;
+.home-brand > section.home-section-reveal.is-visible:nth-of-type(8) {
+  animation-delay: 0.28s;
 }
-.home-brand > section.home-section-reveal:nth-of-type(8) {
-  animation-delay: 0.35s;
-}
-.home-brand > section.home-section-reveal:nth-of-type(9) {
-  animation-delay: 0.4s;
+.home-brand > section.home-section-reveal.is-visible:nth-of-type(9) {
+  animation-delay: 0.32s;
 }
 
 /** Premium framing: very light wash so alternating white/stone sections stay crisp. */

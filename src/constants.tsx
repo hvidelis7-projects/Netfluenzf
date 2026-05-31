@@ -1,9 +1,9 @@
 /**
- * Design tokens, marketing copy, and the Netfluenz logo.
+ * Design tokens, marketing copy, and the Trifluenz logo.
  * Runtime campaign and creator data comes from Firestore (`AppContext` + `firestoreData.ts`).
  */
 
-import React from 'react';
+import React, { useId } from 'react';
 
 /**
  * Full-bleed welcome-page backgrounds: portraits & lifestyle (creator / model energy).
@@ -53,118 +53,284 @@ export const HOME_PRODUCT_PILLARS = [
   },
 ] as const;
 
-/** Official Netfluenz icon logo (SVG, transparent background). */
-export const NetfluenzLogo: React.FC<{ className?: string }> = ({ className = 'w-10 h-10' }) => {
+/** Official Trifluenz icon — creator tripod with 3-blade lens aperture hub. */
+export const TrifluenzLogo: React.FC<{ className?: string }> = ({ className = 'w-10 h-10' }) => {
+  const uid = useId().replace(/:/g, '');
+
   return (
-    <svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-hidden>
       <defs>
-        <linearGradient id="logoOrangeGrad" x1="60" y1="180" x2="200" y2="60" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="#FF7A00" />
-          <stop offset="1" stop-color="#FF3300" />
+        <linearGradient id={`${uid}-ring`} x1="94" y1="24" x2="162" y2="84" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#FFE066" />
+          <stop offset="0.45" stopColor="#FF5500" />
+          <stop offset="1" stopColor="#FF3366" />
         </linearGradient>
-        <filter id="logoShadow" x="-10%" y="-10%" width="120%" height="120%">
-          <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#FF3300" flood-opacity="0.22" />
+        <radialGradient
+          id={`${uid}-ringFill`}
+          cx="0"
+          cy="0"
+          r="1"
+          gradientUnits="userSpaceOnUse"
+          gradientTransform="translate(128 54) rotate(90) scale(36)"
+        >
+          <stop offset="0" stopColor="#312E81" />
+          <stop offset="0.55" stopColor="#1E1B4B" />
+          <stop offset="1" stopColor="#FF5500" stopOpacity="0.35" />
+        </radialGradient>
+        <linearGradient id={`${uid}-bladeA`} x1="128" y1="28" x2="128" y2="60" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#FFF3B0" />
+          <stop offset="0.5" stopColor="#FFB020" />
+          <stop offset="1" stopColor="#FF7700" />
+        </linearGradient>
+        <linearGradient id={`${uid}-bladeB`} x1="128" y1="28" x2="128" y2="60" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#FFD4A8" />
+          <stop offset="0.45" stopColor="#FF5500" />
+          <stop offset="1" stopColor="#FF2200" />
+        </linearGradient>
+        <linearGradient id={`${uid}-bladeC`} x1="128" y1="28" x2="128" y2="60" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#FFCCE8" />
+          <stop offset="0.45" stopColor="#FF6688" />
+          <stop offset="1" stopColor="#FF4400" />
+        </linearGradient>
+        <radialGradient
+          id={`${uid}-iris`}
+          cx="0"
+          cy="0"
+          r="1"
+          gradientUnits="userSpaceOnUse"
+          gradientTransform="translate(128 54) rotate(90) scale(14)"
+        >
+          <stop offset="0" stopColor="#FFFFFF" />
+          <stop offset="0.35" stopColor="#FFE8A3" />
+          <stop offset="0.75" stopColor="#FF8833" />
+          <stop offset="1" stopColor="#FF3300" />
+        </radialGradient>
+        <linearGradient id={`${uid}-stem`} x1="128" y1="86" x2="128" y2="110" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#A78BFA" />
+          <stop offset="0.5" stopColor="#FF8833" />
+          <stop offset="1" stopColor="#FF5500" />
+        </linearGradient>
+        <linearGradient id={`${uid}-legL`} x1="128" y1="118" x2="40" y2="210" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#818CF8" />
+          <stop offset="0.45" stopColor="#FF8833" />
+          <stop offset="1" stopColor="#FF3300" />
+        </linearGradient>
+        <linearGradient id={`${uid}-legR`} x1="128" y1="118" x2="216" y2="210" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#C084FC" />
+          <stop offset="0.45" stopColor="#FF6644" />
+          <stop offset="1" stopColor="#FF2255" />
+        </linearGradient>
+        <linearGradient id={`${uid}-legC`} x1="128" y1="118" x2="128" y2="224" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#FFB020" />
+          <stop offset="0.5" stopColor="#FF5500" />
+          <stop offset="1" stopColor="#E03000" />
+        </linearGradient>
+        <radialGradient
+          id={`${uid}-hub`}
+          cx="0"
+          cy="0"
+          r="1"
+          gradientUnits="userSpaceOnUse"
+          gradientTransform="translate(128 116) rotate(90) scale(12)"
+        >
+          <stop offset="0" stopColor="#FFE566" />
+          <stop offset="0.6" stopColor="#FF5500" />
+          <stop offset="1" stopColor="#FF3366" />
+        </radialGradient>
+        <filter id={`${uid}-glow`} x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#FF8833" floodOpacity="0.55" />
+          <feDropShadow dx="0" dy="6" stdDeviation="10" floodColor="#FF4400" floodOpacity="0.28" />
+        </filter>
+        <filter id={`${uid}-bloom`} x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="4" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
         </filter>
       </defs>
-      
-      {/* Modern corporate hexagonal connectivity grid representing the "Net" */}
-      <g stroke="#334155" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" opacity="0.8">
-        <polygon points="128,32 211,80 211,176 128,224 45,176 45,80" />
-        <line x1="128" y1="32" x2="128" y2="128" />
-        <line x1="211" y1="80" x2="128" y2="128" />
-        <line x1="211" y1="176" x2="128" y2="128" />
-        <line x1="128" y1="224" x2="128" y2="128" />
-        <line x1="45" y1="176" x2="128" y2="128" />
-        <line x1="45" y1="80" x2="128" y2="128" />
-      </g>
 
-      {/* Network Node Vertices */}
-      <circle cx="128" cy="32" r="9" fill="#1E293B" />
-      <circle cx="211" cy="80" r="9" fill="#1E293B" />
-      <circle cx="211" cy="176" r="9" fill="#1E293B" />
-      <circle cx="128" cy="224" r="9" fill="#1E293B" />
-      <circle cx="45" cy="176" r="9" fill="#1E293B" />
-      <circle cx="45" cy="80" r="9" fill="#1E293B" />
-      <circle cx="128" cy="128" r="7" fill="#475569" />
+      {/* Ambient colour wash behind mark */}
+      <ellipse cx="128" cy="130" rx="88" ry="96" fill="#FF5500" opacity="0.07" />
+      <ellipse cx="128" cy="54" rx="42" ry="38" fill="#FF8833" opacity="0.12" />
 
-      {/* Sleek Orange Gradient "N"-shaped Growth Arrow */}
-      <g filter="url(#logoShadow)">
+      <g filter={`url(#${uid}-glow)`}>
+        {/* Aperture ring */}
+        <circle cx="128" cy="54" r="34" stroke={`url(#${uid}-ring)`} strokeWidth="5.5" fill={`url(#${uid}-ringFill)`} />
+
+        {/* 3 iris blades — distinct warm hues */}
+        <g transform="translate(128 54)">
+          <path
+            d="M0 -26 C9 -24 16 -16 14 -5 L0 6 L-14 -5 C-16 -16 -9 -24 0 -26 Z"
+            fill={`url(#${uid}-bladeA)`}
+          />
+          <path
+            d="M0 -26 C9 -24 16 -16 14 -5 L0 6 L-14 -5 C-16 -16 -9 -24 0 -26 Z"
+            fill={`url(#${uid}-bladeB)`}
+            transform="rotate(120)"
+          />
+          <path
+            d="M0 -26 C9 -24 16 -16 14 -5 L0 6 L-14 -5 C-16 -16 -9 -24 0 -26 Z"
+            fill={`url(#${uid}-bladeC)`}
+            transform="rotate(240)"
+          />
+        </g>
+
+        {/* Inner iris + lens bloom */}
+        <g filter={`url(#${uid}-bloom)`}>
+          <circle cx="128" cy="54" r="11" fill={`url(#${uid}-iris)`} />
+        </g>
+        <ellipse cx="121" cy="47" rx="9" ry="6" fill="#FFFFFF" opacity="0.45" />
+        <circle cx="133" cy="58" r="2.5" fill="#FFFFFF" opacity="0.6" />
+
+        {/* Mount stem */}
+        <rect x="119" y="86" width="18" height="26" rx="5" fill={`url(#${uid}-stem)`} />
+        <rect x="122" y="88" width="5" height="20" rx="2.5" fill="#FFFFFF" opacity="0.35" />
+
+        {/* Y-junction hub */}
+        <circle cx="128" cy="116" r="11" fill={`url(#${uid}-hub)`} />
+        <circle cx="128" cy="116" r="5.5" fill="#FFFFFF" opacity="0.5" />
+
+        {/* Tripod legs — each a distinct warm gradient */}
         <path
-          d="M80,165 L80,92 L176,165 L176,104"
-          stroke="url(#logoOrangeGrad)"
+          d="M128 124 Q96 160 40 208"
+          stroke={`url(#${uid}-legL)`}
           strokeWidth="16"
           strokeLinecap="round"
-          strokeLinejoin="round"
+          fill="none"
         />
         <path
-          d="M158,104 L176,104 L176,122"
-          stroke="url(#logoOrangeGrad)"
+          d="M128 124 Q160 160 216 208"
+          stroke={`url(#${uid}-legR)`}
           strokeWidth="16"
           strokeLinecap="round"
-          strokeLinejoin="round"
+          fill="none"
         />
+        <path
+          d="M128 124 L128 222"
+          stroke={`url(#${uid}-legC)`}
+          strokeWidth="12"
+          strokeLinecap="round"
+          fill="none"
+        />
+
+        {/* Leg specular highlights */}
+        <path
+          d="M128 130 Q100 164 50 204"
+          stroke="#FFFFFF"
+          strokeWidth="3.5"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.28"
+        />
+        <path
+          d="M128 130 Q156 164 206 204"
+          stroke="#FFFFFF"
+          strokeWidth="3.5"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.28"
+        />
+        <path
+          d="M128 134 L128 214"
+          stroke="#FFFFFF"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.22"
+        />
+
+        {/* Rubber feet — jewel-tone accents */}
+        <circle cx="40" cy="208" r="11" fill="#4C1D95" />
+        <circle cx="216" cy="208" r="11" fill="#9D174D" />
+        <circle cx="128" cy="222" r="10" fill="#C2410C" />
+        <circle cx="40" cy="208" r="6" fill="#FFB020" />
+        <circle cx="216" cy="208" r="6" fill="#FF6688" />
+        <circle cx="128" cy="222" r="5.5" fill="#FF8833" />
+        <circle cx="40" cy="208" r="2.5" fill="#FFFFFF" opacity="0.7" />
+        <circle cx="216" cy="208" r="2.5" fill="#FFFFFF" opacity="0.7" />
+        <circle cx="128" cy="222" r="2" fill="#FFFFFF" opacity="0.65" />
       </g>
     </svg>
   );
 };
 
-/** Custom premium PWA Download Icon resembling the Netfluenz logo. */
+/** @deprecated Use TrifluenzLogo */
+export const NetfluenzLogo = TrifluenzLogo;
+
+/** PWA install icon — aperture tripod base with download arrow. */
 export const PwaDownloadIcon: React.FC<{ className?: string }> = ({ className = 'w-10 h-10' }) => {
+  const uid = useId().replace(/:/g, '');
+
   return (
-    <svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-hidden>
       <defs>
-        <radialGradient id="dlTip" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(128 56) rotate(90) scale(60)">
-          <stop offset="0" stop-color="#FFECC7"/>
-          <stop offset="0.5" stop-color="#FFC060"/>
-          <stop offset="1" stop-color="#FF5500"/>
-        </radialGradient>
-        <linearGradient id="dlArrowGrad" x1="128" y1="50" x2="128" y2="180" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="#FFE3C1"/>
-          <stop offset="1" stop-color="#FF5500"/>
+        <linearGradient id={`${uid}-dl-ring`} x1="100" y1="24" x2="156" y2="80" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#FFE066" />
+          <stop offset="1" stopColor="#FF5500" />
         </linearGradient>
-        <filter id="dlShadow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.3"/>
+        <linearGradient id={`${uid}-dl-bladeA`} x1="128" y1="32" x2="128" y2="58" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#FFF3B0" />
+          <stop offset="1" stopColor="#FF8800" />
+        </linearGradient>
+        <linearGradient id={`${uid}-dl-bladeB`} x1="128" y1="32" x2="128" y2="58" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#FFD4A8" />
+          <stop offset="1" stopColor="#FF4400" />
+        </linearGradient>
+        <linearGradient id={`${uid}-dl-bladeC`} x1="128" y1="32" x2="128" y2="58" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#FFCCE8" />
+          <stop offset="1" stopColor="#FF6688" />
+        </linearGradient>
+        <linearGradient id={`${uid}-dl-legL`} x1="128" y1="96" x2="52" y2="168" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#A78BFA" />
+          <stop offset="1" stopColor="#FF8833" />
+        </linearGradient>
+        <linearGradient id={`${uid}-dl-legR`} x1="128" y1="96" x2="204" y2="168" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#C084FC" />
+          <stop offset="1" stopColor="#FF5577" />
+        </linearGradient>
+        <linearGradient id={`${uid}-dl-legC`} x1="128" y1="96" x2="128" y2="172" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#FFB020" />
+          <stop offset="1" stopColor="#FF4400" />
+        </linearGradient>
+        <linearGradient id={`${uid}-dl-arrow`} x1="128" y1="108" x2="128" y2="196" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#FFF8EE" />
+          <stop offset="1" stopColor="#FF5500" />
+        </linearGradient>
+        <filter id={`${uid}-dl-shadow`} x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#FF8833" floodOpacity="0.45" />
         </filter>
-        <g id="petal-half">
-          <path d="M128 48C143 48 154 59 154 73C154 89 141 101 128 101C115 101 102 89 102 73C102 59 113 48 128 48Z" fill="url(#dlTip)" opacity="0.45"/>
-        </g>
       </defs>
-      
-      <g filter="url(#dlShadow)">
-        <use href="#petal-half" transform="rotate(0 128 128)"/>
-        <use href="#petal-half" transform="rotate(45 128 128)"/>
-        <use href="#petal-half" transform="rotate(90 128 128)"/>
-        <use href="#petal-half" transform="rotate(135 128 128)"/>
-        <use href="#petal-half" transform="rotate(180 128 128)"/>
-        <use href="#petal-half" transform="rotate(225 128 128)"/>
-        <use href="#petal-half" transform="rotate(270 128 128)"/>
-        <use href="#petal-half" transform="rotate(315 128 128)"/>
+
+      {/* Ghost tripod — upper portion */}
+      <g opacity="0.62">
+        <circle cx="128" cy="52" r="28" stroke={`url(#${uid}-dl-ring)`} strokeWidth="4" fill="#312E81" opacity="0.7" />
+        <g transform="translate(128 52)">
+          <path d="M0 -20 C7 -18 12 -12 11 -4 L0 5 L-11 -4 C-12 -12 -7 -18 0 -20 Z" fill={`url(#${uid}-dl-bladeA)`} />
+          <path d="M0 -20 C7 -18 12 -12 11 -4 L0 5 L-11 -4 C-12 -12 -7 -18 0 -20 Z" fill={`url(#${uid}-dl-bladeB)`} transform="rotate(120)" />
+          <path d="M0 -20 C7 -18 12 -12 11 -4 L0 5 L-11 -4 C-12 -12 -7 -18 0 -20 Z" fill={`url(#${uid}-dl-bladeC)`} transform="rotate(240)" />
+        </g>
+        <circle cx="128" cy="52" r="8" fill="#FFE566" />
+        <rect x="121" y="78" width="14" height="16" rx="3" fill="#A78BFA" />
+        <path d="M128 96 Q98 124 52 168" stroke={`url(#${uid}-dl-legL)`} strokeWidth="10" strokeLinecap="round" />
+        <path d="M128 96 Q158 124 204 168" stroke={`url(#${uid}-dl-legR)`} strokeWidth="10" strokeLinecap="round" />
+        <path d="M128 96 L128 172" stroke={`url(#${uid}-dl-legC)`} strokeWidth="7" strokeLinecap="round" />
+        <circle cx="52" cy="168" r="6" fill="#FFB020" />
+        <circle cx="204" cy="168" r="6" fill="#FF6688" />
+        <circle cx="128" cy="172" r="5" fill="#FF8833" />
       </g>
 
-      <g filter="url(#dlShadow)">
-        <path 
-          d="M128 45V155M128 155L90 117M128 155L166 117" 
-          stroke="url(#dlArrowGrad)" 
-          strokeWidth="20" 
-          strokeLinecap="round" 
+      {/* Download arrow — centered below aperture, above feet */}
+      <g filter={`url(#${uid}-dl-shadow)`}>
+        <path
+          d="M128 108V168M128 168L96 136M128 168L160 136"
+          stroke={`url(#${uid}-dl-arrow)`}
+          strokeWidth="16"
+          strokeLinecap="round"
           strokeLinejoin="round"
         />
-        <path 
-          d="M75 190H181" 
-          stroke="#FF5500" 
-          strokeWidth="20" 
-          strokeLinecap="round"
-        />
+        <path d="M88 196H168" stroke="#FF5500" strokeWidth="16" strokeLinecap="round" />
       </g>
-      
-      <circle cx="128" cy="24" r="6.5" fill="#FF5500"/>
-      <circle cx="202" cy="54" r="6" fill="#FFB44B"/>
-      <circle cx="232" cy="128" r="6.5" fill="#FF5500"/>
-      <circle cx="202" cy="202" r="6" fill="#FFB44B"/>
-      <circle cx="128" cy="232" r="6.5" fill="#FF5500"/>
-      <circle cx="54" cy="202" r="6" fill="#FFB44B"/>
-      <circle cx="24" cy="128" r="6.5" fill="#FF5500"/>
-      <circle cx="54" cy="54" r="6" fill="#FFB44B"/>
     </svg>
   );
 };

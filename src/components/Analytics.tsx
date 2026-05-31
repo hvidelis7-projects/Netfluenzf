@@ -138,7 +138,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ role }) => {
   const handleExport = () => {
     const esc = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
     const lines: string[] = [];
-    lines.push(['Netfluenz analytics export', '', ''].map(esc).join(','));
+    lines.push(['Trifluenz analytics export', '', ''].map(esc).join(','));
     lines.push(['Generated (UTC)', new Date().toISOString(), ''].map(esc).join(','));
     lines.push(['Role', role, ''].map(esc).join(','));
     lines.push(['Time range', timeRange, ''].map(esc).join(','));
@@ -161,7 +161,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ role }) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `netfluenz-analytics-${role.toLowerCase()}-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `trifluenz-analytics-${role.toLowerCase()}-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
     playSound('success');
@@ -174,7 +174,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ role }) => {
         <div className="space-y-1">
           <h2 className="text-3xl font-black serif italic brand-text">Performance</h2>
           <p className="text-sm text-gray-500 font-medium">
-            Figures below come from your Netfluenz workspace (campaigns, wallet, ledger). Connect external analytics for reach and demographics.
+            Figures below come from your Trifluenz workspace (campaigns, wallet, ledger). Connect external analytics for reach and demographics.
           </p>
         </div>
       </div>

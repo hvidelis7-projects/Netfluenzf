@@ -246,7 +246,7 @@ const Marketplace: React.FC = () => {
                 <div className="flex items-center space-x-2">
                    <div className="bg-green-100/80 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                      <span className="text-[9px] font-black text-green-700 uppercase tracking-widest">Verified on Netfluenz</span>
+                      <span className="text-[9px] font-black text-green-700 uppercase tracking-widest">Verified on Trifluenz</span>
                    </div>
                    <div className="h-[1px] flex-grow bg-gray-200/50"></div>
                 </div>

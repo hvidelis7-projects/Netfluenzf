@@ -1,5 +1,5 @@
 /**
- * Shared TypeScript contracts for Netfluenz.
+ * Shared TypeScript contracts for Trifluenz.
  *
  * Domain model: brands and influencers collaborate on {@link Campaign}s with
  * escrow-style money flow, deliverables, messaging, and audit-style logs.

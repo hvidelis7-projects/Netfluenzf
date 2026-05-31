@@ -7,11 +7,13 @@
  */
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, BarChart2, ChevronDown, Shield, Sparkles } from 'lucide-react';
 import { HOME_PRODUCT_PILLARS } from '../constants';
 import { playSound } from '../audio.ts';
 import { HomeHeroKinetic } from '../components/HomeHeroKinetic';
+import { HomeSectionReveal } from '../components/HomeSectionReveal';
+import { useHomeHeroCarousel } from '../context/HomeHeroCarouselContext';
 
 const sectionY = 'py-24 md:py-32';
 const sectionShell = 'mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10';
@@ -40,6 +42,21 @@ const BRAND_FLYWHEEL_BULLETS: string[] = [
   'Work with verified creators and reduce the risk of fake engagement.',
   'Track campaign performance in real time with clear, practical metrics.',
   'Focus your budget on results and scale what works.',
+];
+
+const IMPACT_PILLARS: { title: string; body: string }[] = [
+  {
+    title: 'Kenya-first',
+    body: 'Built for local brands, creators, and the realities of working in Kenya.',
+  },
+  {
+    title: 'Structured deals',
+    body: 'Clear briefs, milestones, and deliverables — not handshake DMs.',
+  },
+  {
+    title: 'Continent-scale vision',
+    body: 'Starting in Kenya with infrastructure designed to grow across Africa.',
+  },
 ];
 
 const MODULES: { title: string; body: string }[] = [
@@ -82,12 +99,12 @@ const JOURNEY_STEPS: { title: string; body: string }[] = [
 
 const FAQ_ITEMS: { q: string; a: string }[] = [
   {
-    q: 'What is Netfluenz?',
-    a: 'Netfluenz is a platform that connects creators and brands through a transparent, performance-focused system. It helps both sides run campaigns with more structure, visibility, and better results.',
+    q: 'What is Trifluenz?',
+    a: 'Trifluenz is a platform that connects creators and brands through a transparent, performance-focused system. It helps both sides run campaigns with more structure, visibility, and better results.',
   },
   {
     q: 'Who can use it?',
-    a: 'Creators of all sizes and brands of all sizes can use Netfluenz. If you have an engaged audience or want to grow through creator partnerships, the platform is built for you.',
+    a: 'Creators of all sizes and brands of all sizes can use Trifluenz. If you have an engaged audience or want to grow through creator partnerships, the platform is built for you.',
   },
   {
     q: 'How is data handled?',
@@ -109,9 +126,15 @@ const PillarCard: React.FC<{ title: string; body: string; index: number }> = ({ 
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const { index: heroIndex, total: heroTotal } = useHomeHeroCarousel();
   const cta = () => {
     playSound('click');
     navigate('/auth');
+  };
+
+  const scrollToMission = () => {
+    playSound('click');
+    document.getElementById('home-mission')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
@@ -174,16 +197,38 @@ const Home: React.FC = () => {
             </div>
           </div>
         </div>
+
+        <div className="pointer-events-none absolute inset-x-0 bottom-6 z-10 flex flex-col items-center gap-5 md:bottom-8">
+          <div className="flex gap-2" aria-hidden>
+            {Array.from({ length: heroTotal }).map((_, i) => (
+              <span
+                key={i}
+                className={`h-1.5 rounded-full shadow-sm transition-all duration-500 ${
+                  i === heroIndex ? 'w-8 bg-white' : 'w-1.5 bg-white/45'
+                }`}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={scrollToMission}
+            className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white/80 backdrop-blur-md transition hover:border-white/40 hover:bg-white/15 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transition-none"
+            aria-label="Scroll to learn more"
+          >
+            <ChevronDown className="h-5 w-5 motion-safe:animate-bounce" strokeWidth={2} aria-hidden />
+          </button>
+        </div>
       </section>
 
-      <section
-        className={`home-section-reveal home-narrative-band ${sectionY}`}
+      <HomeSectionReveal
+        id="home-mission"
+        className={`home-narrative-band ${sectionY}`}
         aria-labelledby="home-mission-heading"
       >
         <div className={sectionShell}>
           <div className="home-glass-rail p-8 md:p-12 lg:p-14">
             <header className="mx-auto max-w-3xl text-center">
-              <p className={overline}>Netfluenz</p>
+              <p className={overline}>Trifluenz</p>
               <h2
                 id="home-mission-heading"
                 className="mt-3 font-serif text-3xl font-semibold leading-tight tracking-tight text-balance text-stone-900 md:text-[2.125rem] md:leading-snug"
@@ -192,7 +237,7 @@ const Home: React.FC = () => {
               </h2>
               <div className="home-body-prose mx-auto mt-6 max-w-prose space-y-5 text-left text-sm leading-relaxed text-pretty text-stone-600 md:text-center md:text-base">
                 <p>
-                  Netfluenz exists to formalize, structure, and scale Africa&apos;s influencer economy. We are replacing
+                  Trifluenz exists to formalize, structure, and scale Africa&apos;s influencer economy. We are replacing
                   informal, trust-based deals with a system built on data, transparency, and performance, unlocking access
                   for millions.
                 </p>
@@ -205,10 +250,10 @@ const Home: React.FC = () => {
             <div className="mt-14 grid gap-6 lg:mt-16 lg:grid-cols-2 lg:gap-8">
               <div className="home-glass-card p-8 md:p-10">
                 <h3 className="font-serif text-xl font-semibold tracking-tight text-stone-900 md:text-2xl">
-                  The flywheel effect
+                  Built for Kenya, ready to scale
                 </h3>
                 <ul className="mt-6 space-y-5">
-                  {FLYWHEEL_POINTS.map((item) => (
+                  {IMPACT_PILLARS.map((item) => (
                     <li key={item.title} className="border-l-2 border-brand/50 pl-4">
                       <p className="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-stone-500">{item.title}</p>
                       <p className="home-body-prose mt-1.5 text-sm leading-relaxed text-stone-700 md:text-[0.9375rem]">{item.body}</p>
@@ -224,17 +269,17 @@ const Home: React.FC = () => {
                   We don&apos;t just generate returns; we expand access.
                 </p>
                 <p className="home-body-prose mt-4 text-sm leading-relaxed text-stone-700 md:text-[0.9375rem]">
-                  Netfluenz is designed to fuel youth income, SME growth, and economic inclusion across Africa.
+                  Trifluenz is designed to fuel youth income, SME growth, and economic inclusion across Africa.
                 </p>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </HomeSectionReveal>
 
-      <section
+      <HomeSectionReveal
         id="for-brands"
-        className={`home-section-reveal home-narrative-band-alt ${sectionY}`}
+        className={`home-narrative-band-alt ${sectionY}`}
         aria-labelledby="home-brands-heading"
       >
         <div className={sectionShell}>
@@ -247,13 +292,13 @@ const Home: React.FC = () => {
               Growth-minded brands don&apos;t guess. They scale.
             </h2>
             <p className="home-body-prose mt-5 max-w-3xl text-sm leading-relaxed text-pretty text-stone-600 md:text-base">
-              Netfluenz gives brands the tools to run creator campaigns in one place.
+              Trifluenz gives brands the tools to run creator campaigns in one place.
             </p>
             <p className="home-body-prose mt-4 max-w-3xl text-sm leading-relaxed text-pretty text-stone-600 md:text-base">
               Find the right creators, manage delivery, and measure results with more confidence.
             </p>
             <h3 className="mt-10 font-sans text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">
-              Why brands choose Netfluenz
+              Why brands choose Trifluenz
             </h3>
             <ul className="mt-5 max-w-3xl list-disc space-y-3 pl-5 text-sm leading-relaxed text-stone-700 marker:text-orange-200/80 md:text-[0.9375rem]">
               {BRAND_FLYWHEEL_BULLETS.map((line) => (
@@ -273,11 +318,11 @@ const Home: React.FC = () => {
             </button>
           </div>
         </div>
-      </section>
+      </HomeSectionReveal>
 
-      <section
+      <HomeSectionReveal
         id="for-creators"
-        className={`home-section-reveal home-narrative-band ${sectionY}`}
+        className={`home-narrative-band ${sectionY}`}
         aria-labelledby="home-creators-heading"
       >
         <div className={sectionShell}>
@@ -292,7 +337,7 @@ const Home: React.FC = () => {
             <div className="home-body-prose mt-6 max-w-3xl space-y-5 text-sm leading-relaxed text-pretty text-stone-600 md:text-base">
               <p>You don&apos;t need millions of followers to start earning.</p>
               <p>
-                Netfluenz helps you find brand opportunities that match your style, audience, and strengths.
+                Trifluenz helps you find brand opportunities that match your style, audience, and strengths.
               </p>
               <p className="font-medium text-stone-800">Just getting started? You&apos;re welcome here.</p>
               <p>
@@ -307,15 +352,15 @@ const Home: React.FC = () => {
               onClick={cta}
               className="mt-6 inline-flex items-center justify-center gap-2 rounded-full border border-white/80 bg-white/70 px-8 py-3.5 text-sm font-semibold text-stone-900 shadow-md backdrop-blur-md transition hover:border-brand/35 hover:bg-white active:scale-[0.99] motion-reduce:transition-none"
             >
-              Join Netfluenz today
+              Join Trifluenz today
               <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} aria-hidden />
             </button>
           </div>
         </div>
-      </section>
+      </HomeSectionReveal>
 
-      <section
-        className={`home-section-reveal home-narrative-band-alt ${sectionY}`}
+      <HomeSectionReveal
+        className={`home-narrative-band-alt ${sectionY}`}
         aria-labelledby="home-modules-heading"
       >
         <div className={sectionShell}>
@@ -326,7 +371,7 @@ const Home: React.FC = () => {
                 id="home-modules-heading"
                 className="font-serif text-3xl font-semibold leading-tight tracking-tight text-balance text-stone-900 md:text-[2.125rem]"
               >
-                What you can do on Netfluenz
+                What you can do on Trifluenz
               </h2>
               <p className="home-body-prose mt-4 max-w-prose text-sm leading-relaxed text-pretty text-stone-600 md:text-base">
                 Everything below is designed to help creators and brands work together smoothly, from discovery to campaign
@@ -348,10 +393,10 @@ const Home: React.FC = () => {
             </div>
           </div>
         </div>
-      </section>
+      </HomeSectionReveal>
 
-      <section
-        className={`home-section-reveal home-narrative-band px-4 sm:px-8 ${sectionY} lg:px-10`}
+      <HomeSectionReveal
+        className={`home-narrative-band px-4 sm:px-8 ${sectionY} lg:px-10`}
         aria-labelledby="home-pillars-heading"
       >
         <div className={`${sectionShell} max-w-6xl`}>
@@ -377,10 +422,11 @@ const Home: React.FC = () => {
             </div>
           </div>
         </div>
-      </section>
+      </HomeSectionReveal>
 
-      <section
-        className={`home-section-reveal home-narrative-band-alt ${sectionY}`}
+      <HomeSectionReveal
+        id="how-it-works"
+        className={`home-narrative-band-alt ${sectionY}`}
         aria-labelledby="home-journey-heading"
       >
         <div className={`${sectionShell} max-w-3xl`}>
@@ -416,10 +462,10 @@ const Home: React.FC = () => {
             </ol>
           </div>
         </div>
-      </section>
+      </HomeSectionReveal>
 
-      <section
-        className={`home-section-reveal home-narrative-band ${sectionY}`}
+      <HomeSectionReveal
+        className={`home-narrative-band ${sectionY}`}
         aria-labelledby="home-faq-heading"
       >
         <div className={`${sectionShell} max-w-2xl`}>
@@ -456,10 +502,10 @@ const Home: React.FC = () => {
             </div>
           </div>
         </div>
-      </section>
+      </HomeSectionReveal>
 
-      <section
-        className={`home-section-reveal border-t border-stone-200/90 bg-home-surfaceMuted px-5 pb-8 pt-6 sm:px-8 lg:px-10`}
+      <HomeSectionReveal
+        className="border-t border-stone-200/90 bg-home-surfaceMuted px-5 pb-8 pt-6 sm:px-8 lg:px-10"
         aria-labelledby="home-cta-heading"
       >
         <div className={`${sectionShell} max-w-3xl`}>
@@ -484,7 +530,7 @@ const Home: React.FC = () => {
             </button>
           </div>
         </div>
-      </section>
+      </HomeSectionReveal>
     </div>
   );
 };

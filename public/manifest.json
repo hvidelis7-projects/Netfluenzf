@@ -1,10 +1,10 @@
 {
-  "short_name": "Netfluenz",
-  "name": "Netfluenz - Creator Growth Infrastructure",
+  "short_name": "Trifluenz",
+  "name": "Trifluenz - Creator Growth Infrastructure",
   "icons": [
     {
-      "src": "/netfluenz-logo.png",
-      "type": "image/png",
+      "src": "/trifluenz-logo.svg",
+      "type": "image/svg+xml",
       "sizes": "256x256"
     },
     {

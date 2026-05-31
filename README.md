@@ -1,6 +1,6 @@
-# Netfluenz — Creator Growth Infrastructure
+# Trifluenz — Creator Growth Infrastructure
 
-Netfluenz connects brands and verified creators in Kenya — briefs, milestones, and wallet flows built for local teams.
+Trifluenz connects brands and verified creators in Kenya — briefs, milestones, and wallet flows built for local teams.
 
 ## Run Locally
 

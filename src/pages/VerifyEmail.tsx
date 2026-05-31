@@ -67,7 +67,7 @@ const VerifyEmail: React.FC = () => {
         <p className="text-sm text-gray-600 text-center font-medium leading-relaxed mb-6">
           We sent a verification link to{' '}
           <span className="font-bold text-gray-900">{user?.email ?? 'your email'}</span>. You need to confirm it before
-          using Netfluenz with email sign-in.
+          using Trifluenz with email sign-in.
         </p>
 
         {message && (

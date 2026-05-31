@@ -1,10 +1,9 @@
-const CACHE_NAME = 'netfluenz-cache-v1';
+const CACHE_NAME = 'trifluenz-cache-v1';
 const ASSETS = [
   '/',
   '/index.html',
   '/favicon.svg',
-  '/netfluenz-logo.svg',
-  '/netfluenz-logo.png',
+  '/trifluenz-logo.svg',
 ];
 
 self.addEventListener('install', (e) => {

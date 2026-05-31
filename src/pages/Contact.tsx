@@ -6,11 +6,11 @@ import React, { useState } from 'react';
 import { LegalPage } from './LegalPage';
 import { playSound } from '../audio.ts';
 
-const SUPPORT_EMAIL = 'Netfluenz@global.gmail.com';
+const SUPPORT_EMAIL = 'Trifluenz@global.gmail.com';
 
 function buildMailto(subject: string, body: string): string {
   const params = new URLSearchParams({
-    subject: `[Netfluenz] ${subject}`,
+    subject: `[Trifluenz] ${subject}`,
     body,
   });
   return `mailto:${SUPPORT_EMAIL}?${params.toString()}`;

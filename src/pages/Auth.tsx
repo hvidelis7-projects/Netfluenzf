@@ -116,7 +116,7 @@ const Auth: React.FC = () => {
             {isLogin ? 'Log in to your dashboard.' : 'Sign up to connect with brands or creators.'}
           </p>
           <p className="text-[10px] text-gray-500">
-            By continuing, you agree to the Netfluenz{' '}
+            By continuing, you agree to the Trifluenz{' '}
             <Link to="/terms" className="text-[#FF5500] font-semibold underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand rounded">
               Terms
             </Link>{' '}

@@ -1,6 +1,6 @@
 # Compliance, operations, and production readiness
 
-This document summarizes how Netfluenz should evolve toward a production-grade marketplace (Tier C of the product roadmap). It is guidance for engineering and legal review, not legal advice.
+This document summarizes how Trifluenz should evolve toward a production-grade marketplace (Tier C of the product roadmap). It is guidance for engineering and legal review, not legal advice.
 
 ## Payments and M-Pesa
 

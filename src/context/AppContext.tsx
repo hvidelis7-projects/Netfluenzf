@@ -423,7 +423,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const handleAppInstalled = () => {
       setDeferredPrompt(null);
       setIsPwaInstallable(false);
-      addNotification('Netfluenz has been successfully installed as a Progressive Web App! 🎉');
+      addNotification('Trifluenz has been successfully installed as a Progressive Web App! 🎉');
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
