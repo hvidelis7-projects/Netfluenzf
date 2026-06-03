@@ -41,7 +41,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ currentUserRole, recipien
   };
 
   return (
-    <div className="flex flex-col h-[500px] bg-white/40 backdrop-blur-xl rounded-[2rem] border border-white/50 shadow-sm overflow-hidden">
+    <div className="flex flex-col min-h-[320px] max-h-[520px] bg-white/40 backdrop-blur-xl rounded-[2rem] border border-white/50 shadow-sm overflow-hidden">
       {/* Header */}
       <div className="p-5 border-b border-white/30 bg-white/20 flex justify-between items-center">
         <div className="flex items-center gap-3">

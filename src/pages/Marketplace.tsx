@@ -8,12 +8,18 @@ import { UserRole, Influencer, Campaign } from '../types';
 import { playSound } from '../audio.ts';
 import { useApp } from '../context/AppContext';
 import { analyzeInfluencerFit } from '../services/geminiService';
+import { useModalBackNavigation } from '../hooks/useModalBackNavigation';
+import { sendTransactionalNotification } from '../services/notificationService';
 
 const Marketplace: React.FC = () => {
   const { role, user, addCampaign, addNotification, marketplaceCampaigns, availableInfluencers } = useApp();
   const [search, setSearch] = useState('');
   const [selectedInfluencer, setSelectedInfluencer] = useState<Influencer | null>(null);
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
+
+  useModalBackNavigation(!!selectedInfluencer, () => setSelectedInfluencer(null));
+  useModalBackNavigation(!!selectedCampaign, () => setSelectedCampaign(null));
+
   const [proposalSent, setProposalSent] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState<{ score: number; reason: string } | null>(null);
   const [aiError, setAiError] = useState<string | null>(null);
@@ -54,6 +60,15 @@ const Marketplace: React.FC = () => {
     
     addCampaign(newCampaign);
     addNotification(`Proposal sent to ${selectedInfluencer.name}`);
+    
+    // Dispatch transactional alert
+    void sendTransactionalNotification({
+      toEmail: selectedInfluencer.email,
+      toPushToken: selectedInfluencer.pushToken,
+      title: 'New Campaign Proposal',
+      body: `Brand "${user?.name || 'A Brand'}" sent you a campaign proposal: "${newCampaign.title}".`,
+      type: 'both'
+    });
 
     setTimeout(() => { 
       setProposalSent(false); 
@@ -79,13 +94,20 @@ const Marketplace: React.FC = () => {
     addCampaign(application);
     addNotification(`Applied to ${selectedCampaign.title}`);
 
+    // Dispatch transactional alert to brand
+    void sendTransactionalNotification({
+      title: 'New Campaign Application',
+      body: `Creator "${user?.name || 'A Creator'}" applied to campaign: "${selectedCampaign.title}".`,
+      type: 'both'
+    });
+
     setTimeout(() => {
         setProposalSent(false);
         setSelectedCampaign(null);
     }, 2000);
   };
 
-  /** Runs mock fit scoring against a fixed demo brief (no campaign picker yet). */
+  /** Runs AI fit scoring against a sample brand brief (no campaign picker yet). */
   const handleAnalyze = async () => {
     if (!selectedInfluencer) return;
     setIsAnalyzing(true);
@@ -109,7 +131,7 @@ const Marketplace: React.FC = () => {
       {/* Search Header */}
       <div className="space-y-8">
         <div className="space-y-1">
-          <h1 className="text-5xl font-black serif italic brand-text tracking-tighter uppercase leading-none">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black serif italic brand-text tracking-tighter uppercase leading-none">
             {role === UserRole.BRAND ? 'Find creators' : 'Find campaigns'}
           </h1>
           <p className="text-gray-900 text-sm font-bold italic bg-white/30 inline-block px-3 py-1 rounded-full backdrop-blur-sm">
@@ -132,7 +154,7 @@ const Marketplace: React.FC = () => {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
         {role === UserRole.BRAND && filteredInfluencers.length === 0 ? (
           <div className="col-span-full glass-card rounded-[2rem] p-12 text-center border border-dashed border-gray-200/80">
             <p className="text-sm font-medium text-gray-600">No creators match your search.</p>
@@ -202,7 +224,7 @@ const Marketplace: React.FC = () => {
                             </div>
                             
                             <div className="space-y-1">
-                                <h3 className="text-xl font-bold text-gray-900 leading-tight group-hover:text-[#FF5500] transition-colors">{campaign.title}</h3>
+                                <h3 className="text-base sm:text-xl font-bold text-gray-900 group-hover:text-[#FF5500] transition-colors truncate" title={campaign.title}>{campaign.title}</h3>
                                 <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">{campaign.brand}</p>
                             </div>
 
@@ -232,7 +254,7 @@ const Marketplace: React.FC = () => {
           aria-modal="true"
           aria-labelledby="influencer-modal-title"
         >
-          <div className="relative h-[45vh] flex-shrink-0">
+          <div className="relative h-[45vh] md:h-[60vh] lg:h-[70vh] flex-shrink-0">
              <img src={selectedInfluencer.image} className="w-full h-full object-cover" alt="" />
              <div className="absolute inset-0 bg-gradient-to-t from-white/20 via-transparent to-transparent"></div>
              {/* Gradient to blend image into the glass content below */}
@@ -241,7 +263,7 @@ const Marketplace: React.FC = () => {
              <button type="button" aria-label="Close" onClick={() => { playSound('click'); setSelectedInfluencer(null); }} className="absolute top-6 left-6 w-12 h-12 bg-white/60 backdrop-blur-md rounded-full flex items-center justify-center text-gray-900 text-3xl font-light shadow-xl hover:bg-white transition-all">&times;</button>
           </div>
 
-          <div className="flex-grow p-8 space-y-8 overflow-y-auto custom-scroll bg-white/60 backdrop-blur-xl rounded-t-[3rem] -mt-10 border-t border-white/50 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
+          <div className="flex-grow p-4 md:p-8 space-y-8 overflow-y-auto custom-scroll bg-white/60 backdrop-blur-xl rounded-t-[3rem] -mt-10 border-t border-white/50 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
              <div className="space-y-4 pt-2">
                 <div className="flex items-center space-x-2">
                    <div className="bg-green-100/80 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-2">
@@ -312,7 +334,7 @@ const Marketplace: React.FC = () => {
                 <button 
                   onClick={handleInvite}
                   disabled={proposalSent}
-                  className="w-full py-6 button-brand rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl active:scale-95 transition-transform"
+                  className="w-full py-4 md:py-6 button-brand rounded-full text-[10px] md:text-[12px] font-black uppercase tracking-widest shadow-2xl active:scale-95 transition-transform"
                 >
                   {proposalSent ? "Invitation sent!" : "Send invitation"}
                 </button>
@@ -324,12 +346,12 @@ const Marketplace: React.FC = () => {
       {/* Campaign Detail Modal for Influencer */}
       {selectedCampaign && (
           <div
-            className="fixed inset-0 z-[3000] bg-white/80 backdrop-blur-xl animate-in fade-in duration-300 flex items-center justify-center p-5"
+            className="fixed inset-0 z-[3000] bg-white/80 backdrop-blur-xl animate-in fade-in duration-300 flex items-center justify-center p-4 md:p-6"
             role="dialog"
             aria-modal="true"
             aria-labelledby="campaign-modal-title"
           >
-              <div className="bg-white/90 backdrop-blur-xl w-full max-w-2xl p-8 rounded-[2.5rem] shadow-2xl border border-white/50 space-y-6 max-h-[90vh] overflow-y-auto custom-scroll relative">
+              <div className="bg-white/90 backdrop-blur-xl w-full max-w-2xl p-4 md:p-6 rounded-[2.5rem] shadow-2xl border border-white/50 space-y-6 max-h-[90vh] overflow-y-auto custom-scroll relative">
                   <button type="button" aria-label="Close" onClick={() => { playSound('click'); setSelectedCampaign(null); }} className="absolute top-8 right-8 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-200">&times;</button>
                   
                   <div className="space-y-2">
@@ -361,7 +383,7 @@ const Marketplace: React.FC = () => {
                   <button 
                       onClick={handleApply}
                       disabled={proposalSent}
-                      className="w-full py-5 button-brand rounded-xl text-xs font-black uppercase tracking-widest shadow-xl active:scale-95 transition-transform"
+                      className="w-full py-4 md:py-5 button-brand rounded-xl text-xs md:text-sm font-black uppercase tracking-widest shadow-xl active:scale-95 transition-transform"
                   >
                       {proposalSent ? "Application sent!" : "Apply now"}
                   </button>

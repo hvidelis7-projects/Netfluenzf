@@ -13,6 +13,7 @@ import { UserRole } from '../types';
 import { playSound } from '../audio.ts';
 import { useApp } from '../context/AppContext';
 import { navKeyFromPath } from '../lib/navKey';
+import { useModalBackNavigation } from '../hooks/useModalBackNavigation';
 
 interface Toast {
   id: string;
@@ -44,6 +45,11 @@ const Layout: React.FC = () => {
   const notifPanelRef = useRef<HTMLDivElement>(null);
   const notifButtonRef = useRef<HTMLButtonElement>(null);
 
+  useModalBackNavigation(isMobileMenuOpen, () => setIsMobileMenuOpen(false));
+  useModalBackNavigation(showNotifications, () => setShowNotifications(false));
+  useModalBackNavigation(showIosInstallInstructions, () => setShowIosInstallInstructions(false));
+  useModalBackNavigation(showAndroidInstallInstructions, () => setShowAndroidInstallInstructions(false));
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll);
@@ -59,7 +65,7 @@ const Layout: React.FC = () => {
   }, [isMobileMenuOpen]);
 
   useEffect(() => {
-    (window as unknown as { showToast?: (message: string, type?: 'success' | 'info') => void }).showToast = (
+    const showToast = (
       message: string,
       type: 'success' | 'info' = 'success'
     ) => {
@@ -69,6 +75,20 @@ const Layout: React.FC = () => {
       setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
       }, 3000);
+    };
+
+    (window as unknown as { showToast?: (message: string, type?: 'success' | 'info') => void }).showToast = showToast;
+
+    // Register foreground FCM push notification listener
+    let unsubForeground: (() => void) | undefined;
+    import('../services/notificationService').then(({ setupForegroundNotificationListener }) => {
+      unsubForeground = setupForegroundNotificationListener((msg) => {
+        showToast(msg, 'info');
+      });
+    }).catch(() => {});
+
+    return () => {
+      if (unsubForeground) unsubForeground();
     };
   }, []);
 

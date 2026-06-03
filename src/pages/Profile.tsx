@@ -8,11 +8,16 @@ import { useApp } from '../context/AppContext';
 import { UserRole, Influencer, UserProfile } from '../types';
 import { playSound } from '../audio.ts';
 import { isCloudinaryConfigured, uploadToCloudinary } from '../services/cloudinary';
+import { useModalBackNavigation } from '../hooks/useModalBackNavigation';
 
 const Profile: React.FC = () => {
   const { user, updateUserProfile, role, addNotification } = useApp();
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState<'profile' | 'mediakit'>('profile');
+
+  useModalBackNavigation(isEditing, () => setIsEditing(false));
+  useModalBackNavigation(activeTab === 'mediakit', () => setActiveTab('profile'));
+
   const [formData, setFormData] = useState<Partial<UserProfile>>({});
   const portfolioInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -144,28 +149,28 @@ const Profile: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-5 pt-24 pb-20 space-y-8 min-h-screen">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2 border-b border-white/20">
         <div className="space-y-1">
           <h1 className="text-4xl md:text-5xl font-black serif italic brand-text tracking-tighter uppercase leading-none">Your profile</h1>
           <p className="text-gray-900 font-medium text-sm italic bg-white/30 inline-block px-3 py-1 rounded-full backdrop-blur-sm">
             Update how others see you on Trifluenz.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center gap-3 sm:flex-nowrap">
            {role === UserRole.INFLUENCER && (
-             <div className="bg-gray-100 p-1 rounded-full flex">
-                <button 
-                  onClick={() => setActiveTab('profile')}
-                  className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'profile' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
-                >
-                  Profile
-                </button>
-                <button 
-                  onClick={() => setActiveTab('mediakit')}
-                  className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'mediakit' ? 'bg-white shadow-sm text-[#FF5500]' : 'text-gray-500 hover:text-gray-700'}`}
-                >
-                  Media Kit
-                </button>
+             <div className="bg-white/40 backdrop-blur-md rounded-full border border-white/40 shadow-sm flex p-1">
+                 <button 
+                   onClick={() => setActiveTab('profile')}
+                   className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'profile' ? 'bg-white shadow-md text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+                 >
+                   Profile
+                 </button>
+                 <button 
+                   onClick={() => setActiveTab('mediakit')}
+                   className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'mediakit' ? 'bg-white shadow-md text-[#FF5500]' : 'text-gray-500 hover:text-gray-700'}`}
+                 >
+                   Media Kit
+                 </button>
              </div>
            )}
            {activeTab === 'profile' && (
@@ -391,24 +396,24 @@ const Profile: React.FC = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-               <div className="bg-white/60 backdrop-blur-md border border-white/50 p-6 rounded-[2rem] text-center space-y-1">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Total Reach</p>
-                  <p className="text-3xl font-black serif italic text-gray-900">{(user.followers || 0).toLocaleString()}</p>
-               </div>
-               <div className="bg-white/60 backdrop-blur-md border border-white/50 p-6 rounded-[2rem] text-center space-y-1">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Engagement</p>
-                  <p className="text-3xl font-black serif italic text-[#FF5500]">{user.engagementRate}%</p>
-               </div>
-               <div className="bg-white/60 backdrop-blur-md border border-white/50 p-6 rounded-[2rem] text-center space-y-1">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Trust Score</p>
-                  <p className="text-3xl font-black serif italic text-green-600">{(user as Influencer).trustScore || 98}</p>
-               </div>
-               <div className="bg-white/60 backdrop-blur-md border border-white/50 p-6 rounded-[2rem] text-center space-y-1">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Avg. Rate</p>
-                  <p className="text-3xl font-black serif italic text-gray-900">$250</p>
-               </div>
-            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                <div className="bg-white/60 backdrop-blur-md border border-white/50 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] text-center space-y-1">
+                   <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-gray-500">Total Reach</p>
+                   <p className="text-2xl sm:text-3xl font-black serif italic text-gray-900">{(user.followers || 0).toLocaleString()}</p>
+                </div>
+                <div className="bg-white/60 backdrop-blur-md border border-white/50 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] text-center space-y-1">
+                   <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-gray-500">Engagement</p>
+                   <p className="text-2xl sm:text-3xl font-black serif italic text-[#FF5500]">{user.engagementRate}%</p>
+                </div>
+                <div className="bg-white/60 backdrop-blur-md border border-white/50 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] text-center space-y-1">
+                   <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-gray-500">Trust Score</p>
+                   <p className="text-2xl sm:text-3xl font-black serif italic text-green-600">{(user as Influencer).trustScore || 98}</p>
+                </div>
+                <div className="bg-white/60 backdrop-blur-md border border-white/50 p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] text-center space-y-1">
+                   <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-gray-500">Avg. Rate</p>
+                   <p className="text-2xl sm:text-3xl font-black serif italic text-gray-900">$250</p>
+                </div>
+             </div>
 
             {/* Portfolio / Featured Content */}
             <div className="space-y-4">
@@ -423,7 +428,7 @@ const Profile: React.FC = () => {
                   <h3 className="text-xl font-bold serif italic text-gray-900">Featured content</h3>
                   <button type="button" onClick={handleAddContent} className="text-[10px] font-black uppercase tracking-widest text-[#FF5500] hover:text-orange-700">+ Add image</button>
                </div>
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                   {(() => {
                     const uploaded = user.portfolio || [];
                     const filler = [1, 2, 3].map((i) => `https://picsum.photos/seed/${i + 50}/400/500`);

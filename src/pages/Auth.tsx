@@ -10,7 +10,7 @@ import { playSound } from '../audio.ts';
 import { auth, needsPasswordEmailVerification } from '../lib/firebase';
 
 const Auth: React.FC = () => {
-  const { addNotification, useFirebaseAuth, authSignIn, authSignUp, authSignInWithGoogle, authReady } = useApp();
+  const { addNotification, authSignIn, authSignUp, authSignInWithGoogle, authReady } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: string } | null)?.from ?? '/dashboard';
@@ -47,21 +47,12 @@ const Auth: React.FC = () => {
       return;
     }
     playSound('success');
-    if (useFirebaseAuth) {
-      navigate('/verify-email', { replace: true, state: { next: '/onboarding' } });
-    } else {
-      navigate('/onboarding', { replace: true });
-    }
+    navigate('/verify-email', { replace: true, state: { next: '/onboarding' } });
     return;
   };
 
   const handleGoogle = async () => {
     setFormError(null);
-    if (!useFirebaseAuth) {
-      playSound('click');
-      addNotification('Google sign-in is not available on this version of the app yet.');
-      return;
-    }
     setIsLoading(true);
     playSound('click');
     const { error } = await authSignInWithGoogle(!isLogin, selectedRole);
@@ -94,20 +85,8 @@ const Auth: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center px-5 py-20">
       <div className="w-full max-w-md bg-white/60 backdrop-blur-xl border border-white/50 p-8 rounded-[2.5rem] shadow-2xl animate-in fade-in zoom-in duration-500">
-        {!useFirebaseAuth && (
-          <div
-            className="mb-6 rounded-2xl border border-brand/20 bg-brand/5 px-4 py-3 text-center"
-            role="status"
-          >
-            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF5500]">Demo Mode Active</p>
-            <p className="mt-1 text-[11px] font-medium leading-normal text-gray-700">
-              Firebase is not configured. Log in with <span className="font-bold">brand@trifluenz.com</span> or <span className="font-bold">creator@trifluenz.com</span> (password: <span className="font-bold">password123</span>) or register a new local account!
-            </p>
-          </div>
-        )}
-
         <div className="text-center space-y-2 mb-8">
-          <h2 className="text-3xl font-black serif italic brand-text">
+          <h2 className="text-2xl sm:text-3xl font-black serif italic brand-text tracking-tight">
             {isLogin ? 'Welcome back' : 'Create account'}
           </h2>
           <p className="text-sm text-gray-600 font-medium">
@@ -148,7 +127,7 @@ const Auth: React.FC = () => {
         </div>
 
         <form onSubmit={(e) => void handleSubmit(e)} className="space-y-5" noValidate>
-          {(!useFirebaseAuth || !isLogin) && (
+          {!isLogin && (
             <div className="space-y-1">
               <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 pl-2">Account type</span>
               <div className="grid grid-cols-2 gap-3">
@@ -220,7 +199,7 @@ const Auth: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-4 button-brand rounded-xl text-xs font-black uppercase tracking-widest shadow-xl active:scale-95 transition-transform disabled:opacity-70 disabled:cursor-not-allowed mt-4"
+            className="w-full py-3 sm:py-4 button-brand rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest shadow-xl active:scale-95 transition-transform disabled:opacity-70 disabled:cursor-not-allowed mt-4"
           >
             {isLoading ? 'Please wait...' : isLogin ? 'Log in' : 'Sign up'}
           </button>

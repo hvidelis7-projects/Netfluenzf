@@ -217,11 +217,11 @@ const Analytics: React.FC<AnalyticsProps> = ({ role }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="glass-card p-8 rounded-[2.5rem] col-span-1 lg:col-span-2 relative">
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="text-xl font-black serif italic brand-text">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <h3 className="text-lg sm:text-xl font-black serif italic brand-text">
               {role === UserRole.BRAND ? 'Cross-platform traction' : 'Audience engagement'}
             </h3>
-            <div className="flex gap-2 items-center">
+            <div className="flex flex-wrap gap-2 items-center">
               <select
                 value={selectedPlatform}
                 onChange={(e) => setSelectedPlatform(e.target.value)}

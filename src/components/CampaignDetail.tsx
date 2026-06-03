@@ -8,6 +8,7 @@ import { Campaign, UserRole } from '../types';
 import { playSound } from '../audio.ts';
 import ChatInterface from './ChatInterface';
 import { useApp } from '../context/AppContext';
+import { sendTransactionalNotification } from '../services/notificationService';
 
 interface CampaignDetailProps {
   campaign: Campaign;
@@ -88,6 +89,18 @@ const CampaignDetail: React.FC<CampaignDetailProps> = ({ campaign, role, onClose
       status: 'completed',
       logs: [newLog, ...(campaign.logs || [])]
     });
+    
+    // Dispatch transactional alert to creator
+    if (influencer) {
+      void sendTransactionalNotification({
+        toEmail: influencer.email,
+        toPushToken: influencer.pushToken,
+        title: 'Payment Released',
+        body: `Brand released payment KES ${campaign.budget.toLocaleString()} for campaign: "${campaign.title}".`,
+        type: 'both'
+      });
+    }
+
     notify("Payment Released!");
     setTimeout(onClose, 1500);
   };
@@ -119,12 +132,24 @@ const CampaignDetail: React.FC<CampaignDetailProps> = ({ campaign, role, onClose
       status: 'active',
       logs: [newLog, ...(campaign.logs || [])]
     });
+
+    // Dispatch transactional alert to creator
+    if (influencer) {
+      void sendTransactionalNotification({
+        toEmail: influencer.email,
+        toPushToken: influencer.pushToken,
+        title: 'Contract Activated',
+        body: `Campaign "${campaign.title}" has been activated. You can start working on deliverables!`,
+        type: 'both'
+      });
+    }
+
     notify("Contract Activated!");
   };
 
   return (
     <div className="fixed inset-0 z-[4000] bg-white/80 backdrop-blur-xl animate-in fade-in duration-300 flex flex-col">
-      <div className="p-6 flex-shrink-0 flex items-center justify-between border-b border-gray-200/50 bg-white/50 backdrop-blur-lg">
+      <div className="p-4 sm:p-6 flex-shrink-0 flex items-center justify-between border-b border-gray-200/50 bg-white/50 backdrop-blur-lg">
         <div className="flex flex-col">
            <div className="flex items-center gap-2">
              <span className="w-2 h-2 rounded-full bg-[#FF5500] animate-pulse"></span>
@@ -144,16 +169,16 @@ const CampaignDetail: React.FC<CampaignDetailProps> = ({ campaign, role, onClose
         <button onClick={() => { playSound('click'); onClose(); }} className="w-12 h-12 bg-white/80 rounded-full flex items-center justify-center text-gray-900 text-3xl font-light shadow-sm hover:bg-white transition-colors hover:rotate-90 duration-300">&times;</button>
       </div>
 
-      <div className="flex-grow p-6 space-y-8 overflow-y-auto custom-scroll">
+      <div className="flex-grow p-4 sm:p-6 space-y-6 sm:space-y-8 overflow-y-auto custom-scroll">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* LEFT COLUMN: Campaign Info & Chat */}
           <div className="space-y-8">
              <div className="bg-white/60 backdrop-blur-md p-6 rounded-[2.5rem] space-y-6 border border-white/60 shadow-sm transition-transform hover:scale-[1.01] duration-500">
                 <div className="space-y-1">
-                  <h2 className="text-4xl font-bold serif italic text-gray-900 tracking-tighter leading-none">{campaign.title}</h2>
-                  <p className="text-lg text-gray-600 font-light italic">{campaign.brand}</p>
+                  <h2 className="text-3xl sm:text-4xl font-bold serif italic text-gray-900 tracking-tighter leading-none">{campaign.title}</h2>
+                  <p className="text-base sm:text-lg text-gray-600 font-light italic">{campaign.brand}</p>
                 </div>
-                <p className="text-sm text-gray-700 font-light leading-relaxed">{campaign.description}</p>
+                <p className="text-xs sm:text-sm text-gray-700 font-light leading-relaxed">{campaign.description}</p>
                 
                 {/* Deliverables Section */}
                 <div className="space-y-4 pt-2">
@@ -171,9 +196,6 @@ const CampaignDetail: React.FC<CampaignDetailProps> = ({ campaign, role, onClose
                                     status: 'pending' as const,
                                     dueDate: campaign.timeline?.endDate || new Date().toISOString()
                                 };
-                                // In a real app, we'd add this to the campaign object properly
-                                // For now, we'll just simulate it visually or update if we had a deliverables array in the type
-                                // Since we do have it in types, let's update it.
                                 const updatedDeliverables = [...(campaign.deliverables || []), { ...newDeliverable, description: desc }];
                                 onUpdateCampaign({ ...campaign, deliverables: updatedDeliverables });
                             }
@@ -243,7 +265,7 @@ const CampaignDetail: React.FC<CampaignDetailProps> = ({ campaign, role, onClose
                 </div>
 
                 {/* Visual Smart Contract Vault */}
-                <div className="mt-6 bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-6 text-white relative overflow-hidden group">
+                <div className="mt-6 bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-4 sm:p-6 text-white relative overflow-hidden group">
                    <div className="absolute top-0 right-0 p-12 opacity-5 transform group-hover:scale-110 transition-transform duration-1000">
                       <svg className="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
                    </div>
@@ -265,7 +287,7 @@ const CampaignDetail: React.FC<CampaignDetailProps> = ({ campaign, role, onClose
                       <div className="flex items-end justify-between">
                          <div className="space-y-0.5">
                             <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">Contract Value</p>
-                            <p className="text-3xl font-bold serif italic">KES {campaign.budget.toLocaleString()}</p>
+                            <p className="text-2xl sm:text-3xl font-bold serif italic">KES {campaign.budget.toLocaleString()}</p>
                          </div>
                          {campaign.status !== 'completed' && (
                              <svg className="w-6 h-6 text-orange-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
@@ -373,9 +395,9 @@ const CampaignDetail: React.FC<CampaignDetailProps> = ({ campaign, role, onClose
                       <div key={i} className="relative flex items-start gap-4">
                          <div className="absolute left-0 mt-1.5 w-3 h-3 rounded-full border-2 border-[#FF5500] bg-white z-10 shadow-sm"></div>
                          <div className="pl-6 space-y-0.5 w-full">
-                            <div className="flex justify-between items-center">
-                              <p className="text-xs font-bold text-gray-900">{log.action}</p>
-                              <span className="text-[9px] font-mono text-gray-500 bg-white/50 px-2 py-0.5 rounded border border-gray-200 shadow-sm">{log.hash}</span>
+                            <div className="flex justify-between items-center gap-2">
+                              <p className="text-xs font-bold text-gray-900 truncate">{log.action}</p>
+                              <span className="text-[8px] sm:text-[9px] font-mono text-gray-500 bg-white/50 px-1.5 sm:px-2 py-0.5 rounded border border-gray-200 shadow-sm flex-shrink-0">{log.hash}</span>
                             </div>
                             <p className="text-[9px] text-gray-500 font-medium">{log.date}</p>
                          </div>

@@ -15,10 +15,11 @@ import {
   persistentMultipleTabManager,
   type Firestore,
 } from 'firebase/firestore';
+import { getMessaging, isSupported, type Messaging } from 'firebase/messaging';
 
-const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
-const authDomain = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
-const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+const apiKey = import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyBOF2nx1tcP0nSmqMAL1RZ9tZmSfKOHXcY';
+const authDomain = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'netfluenz-779d1.firebaseapp.com';
+const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID || 'netfluenz-779d1';
 
 /** True when Firestore is initialized (same condition as full Firebase client). */
 export function isFirestoreConfigured(): boolean {
@@ -39,19 +40,17 @@ export function isFirebaseConfigured(): boolean {
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let db: Firestore | null = null;
+let messaging: Messaging | null = null;
 
 if (isFirebaseConfigured()) {
   const config: FirebaseOptions = {
-    apiKey: apiKey!,
-    authDomain: authDomain!,
-    projectId: projectId!,
+    apiKey,
+    authDomain,
+    projectId,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:502792375649:web:baa854947cf67769854920',
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '502792375649',
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'netfluenz-779d1.firebasestorage.app',
   };
-  const appId = import.meta.env.VITE_FIREBASE_APP_ID;
-  if (appId) config.appId = appId;
-  const messagingSenderId = import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID;
-  if (messagingSenderId) config.messagingSenderId = messagingSenderId;
-  const storageBucket = import.meta.env.VITE_FIREBASE_STORAGE_BUCKET;
-  if (storageBucket) config.storageBucket = storageBucket;
 
   app = initializeApp(config);
   auth = getAuth(app);
@@ -74,6 +73,15 @@ if (isFirebaseConfigured()) {
       connectFirestoreEmulator(db, emuHost, emuPort);
     }
   }
+
+  // Initialize messaging asynchronously if supported
+  void isSupported().then((supported) => {
+    if (supported && app) {
+      messaging = getMessaging(app);
+    }
+  }).catch(() => {
+    // Gracefully handle browser messaging support errors
+  });
 }
 
 /** Email/password accounts must complete Firebase email verification before app access. */
@@ -89,4 +97,5 @@ export function createGoogleAuthProvider(): GoogleAuthProvider {
   return p;
 }
 
-export { app, auth, db };
+export { app, auth, db, messaging };
+

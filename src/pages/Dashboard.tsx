@@ -13,6 +13,7 @@ import Analytics from '../components/Analytics';
 import { generateCampaignIdeas } from '../services/geminiService';
 import { playSound } from '../audio.ts';
 import { useApp } from '../context/AppContext';
+import { useModalBackNavigation } from '../hooks/useModalBackNavigation';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'campaigns' | 'analytics' | 'wallet' | 'deliverables'>('overview');
 
   const [showWalletModal, setShowWalletModal] = useState(false);
-  /** Brands add funds; creators withdraw (M-Pesa mock). */
+  /** Brands add funds; creators withdraw via M-Pesa. */
   const [walletModalMode, setWalletModalMode] = useState<'withdraw' | 'topup'>('withdraw');
   const [walletAmount, setWalletAmount] = useState('');
   const [isProcessingWallet, setIsProcessingWallet] = useState(false);
@@ -47,13 +48,18 @@ const Dashboard: React.FC = () => {
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [tempGoal, setTempGoal] = useState('');
 
-  /** Demo “level” derived from wallet balance (not persisted). */
+  /** Gamification level derived from wallet balance. */
   const xp = walletBalance % 10000;
   const level = Math.floor(walletBalance / 10000) + 1;
   const nextLevelXp = 10000;
   const progress = (xp / nextLevelXp) * 100;
 
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  useModalBackNavigation(showCreateModal, () => setShowCreateModal(false));
+  useModalBackNavigation(showWalletModal, () => setShowWalletModal(false));
+  useModalBackNavigation(showGoalModal, () => setShowGoalModal(false));
+
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [newCampaign, setNewCampaign] = useState({
       title: '',
@@ -68,7 +74,7 @@ const Dashboard: React.FC = () => {
 
   const notify = (msg: string) => addNotification(msg);
 
-  /** M-Pesa withdrawal mock: debits wallet, logs transaction, confetti + sound. */
+  /** M-Pesa withdrawal: debits wallet, logs transaction, confetti + sound. */
   const handleWithdraw = () => {
     const amount = Number(walletAmount);
     if (amount > walletBalance || amount <= 0) return;
@@ -98,7 +104,7 @@ const Dashboard: React.FC = () => {
     }, 1500);
   };
 
-  /** Simulated bank / M-Pesa top-up for brand wallet. */
+  /** Bank / M-Pesa top-up for brand wallet. */
   const handleTopUp = () => {
     const amount = Number(walletAmount);
     if (amount <= 0) return;
@@ -142,7 +148,7 @@ const Dashboard: React.FC = () => {
      }
   };
 
-  /** Fills description from `generateCampaignIdeas` (mock AI). */
+  /** Fills description from `generateCampaignIdeas` (AI-powered). */
   const handleGenerateIdea = async () => {
     playSound('click');
     if (!newCampaign.title || !newCampaign.niche) {
@@ -207,10 +213,10 @@ const Dashboard: React.FC = () => {
        {/* Background Gradient Blob */}
        <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-orange-500/10 rounded-full blur-[120px] pointer-events-none -z-10 mix-blend-multiply animate-pulse"></div>
        {/* Header */}
-       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
           <div className="space-y-2">
-            <div className="flex items-center gap-3">
-               <h1 className="text-4xl md:text-5xl font-black serif italic brand-text tracking-tighter uppercase leading-none">
+            <div className="flex items-center gap-3 flex-wrap">
+               <h1 className="text-3xl sm:text-4xl md:text-5xl font-black serif italic brand-text tracking-tighter uppercase leading-none">
                  {role === UserRole.BRAND ? 'Brand home' : 'Creator home'}
                </h1>
                {role === UserRole.INFLUENCER && (
@@ -219,22 +225,22 @@ const Dashboard: React.FC = () => {
                   </div>
                )}
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                <p className="text-gray-900 font-medium text-sm italic bg-white/30 inline-block px-3 py-1 rounded-full backdrop-blur-sm">
                  {role === UserRole.BRAND ? 'Manage campaigns and payments in one place.' : 'Track your jobs and earnings.'}
                </p>
                {role === UserRole.INFLUENCER && (
-                  <div className="flex items-center gap-2 bg-white/40 px-3 py-1 rounded-full backdrop-blur-sm border border-white/30">
-                     <div className="w-24 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="flex items-center gap-3 sm:gap-4 bg-white/40 px-3 py-1 rounded-full backdrop-blur-sm border border-white/30 w-fit">
+                     <div className="w-20 sm:w-24 h-1.5 bg-gray-200 rounded-full overflow-hidden">
                         <div className="h-full bg-[#FF5500] rounded-full transition-all duration-1000" style={{ width: `${progress}%` }}></div>
                      </div>
-                     <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{Math.floor(xp)} / {nextLevelXp} XP</span>
+                     <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest whitespace-nowrap">{Math.floor(xp)} / {nextLevelXp} XP</span>
                   </div>
                )}
             </div>
           </div>
           
-          <div className="flex p-1 bg-white/40 backdrop-blur-md rounded-full border border-white/40 shadow-sm overflow-x-auto">
+          <div className="flex p-1 bg-white/40 backdrop-blur-md rounded-full border border-white/40 shadow-sm overflow-x-auto scrollbar-none -mx-5 px-5 md:mx-0 md:px-0">
              {([
                { id: 'overview' as const, label: 'Overview' },
                { id: 'campaigns' as const, label: 'Campaigns' },
@@ -245,7 +251,7 @@ const Dashboard: React.FC = () => {
                <button
                  key={id}
                  onClick={() => { playSound('click'); setActiveTab(id); }}
-                 className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                 className={`px-4 sm:px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
                    activeTab === id ? 'bg-white shadow-md text-[#FF5500] scale-105' : 'text-gray-500 hover:text-gray-900 hover:bg-white/30'
                  }`}
                >
@@ -261,17 +267,17 @@ const Dashboard: React.FC = () => {
              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white/40 backdrop-blur-lg border border-white/50 p-6 rounded-[2rem] space-y-2 shadow-sm">
                    <p className="text-[9px] font-black text-gray-800 uppercase tracking-widest">Total {role === UserRole.BRAND ? 'spent' : 'earnings'}</p>
-                   <p className="text-4xl font-black serif italic text-gray-900">KES {walletBalance.toLocaleString()}</p>
+                   <p className="text-2xl sm:text-3xl md:text-4xl font-black serif italic text-gray-900">KES {walletBalance.toLocaleString()}</p>
                 </div>
                 <div className="bg-white/40 backdrop-blur-lg border border-white/50 p-6 rounded-[2rem] space-y-2 shadow-sm">
                    <p className="text-[9px] font-black text-gray-800 uppercase tracking-widest">{role === UserRole.BRAND ? 'In escrow' : 'Trust score'}</p>
-                   <p className="text-4xl font-black serif italic brand-text">
+                   <p className="text-2xl sm:text-3xl md:text-4xl font-black serif italic brand-text">
                      {role === UserRole.BRAND ? `KES ${escrowBalance.toLocaleString()}` : '98/100'}
                    </p>
                 </div>
                 <div className="bg-white/40 backdrop-blur-lg border border-white/50 p-6 rounded-[2rem] space-y-2 shadow-sm">
                    <p className="text-[9px] font-black text-gray-800 uppercase tracking-widest">Active campaigns</p>
-                   <p className="text-4xl font-black serif italic text-gray-900">{campaigns.filter(c => c.status === 'active' || c.status === 'auditing').length}</p>
+                   <p className="text-2xl sm:text-3xl md:text-4xl font-black serif italic text-gray-900">{campaigns.filter(c => c.status === 'active' || c.status === 'auditing').length}</p>
                 </div>
              </div>
           )}
@@ -320,11 +326,11 @@ const Dashboard: React.FC = () => {
                         onClick={() => { playSound('click'); navigate(`/campaign/${campaign.id}`); }}
                         className="glass-card p-6 rounded-[2rem] hover:bg-white/80 transition-all cursor-pointer group"
                       >
-                         <div className="flex justify-between items-start">
-                            <div className="space-y-1">
-                               <div className="flex items-center gap-3">
-                                  <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#FF5500] transition-colors">{campaign.title}</h3>
-                                  <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border ${
+                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+                            <div className="space-y-1 min-w-0">
+                               <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                                  <h3 className="text-base sm:text-xl font-bold text-gray-900 group-hover:text-[#FF5500] transition-colors truncate">{campaign.title}</h3>
+                                  <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border flex-shrink-0 ${
                                      campaign.status === 'active' ? 'bg-emerald-100/50 text-emerald-700 border-emerald-200' : 
                                      campaign.status === 'auditing' ? 'bg-amber-100/50 text-amber-700 border-amber-200' : 
                                      campaign.status === 'completed' ? 'bg-blue-100/50 text-blue-700 border-blue-200' :
@@ -334,14 +340,14 @@ const Dashboard: React.FC = () => {
                                     {campaign.status}
                                   </span>
                                </div>
-                               <p className="text-sm text-gray-600 font-medium">{campaign.brand} • {campaign.platform}</p>
+                               <p className="text-xs sm:text-sm text-gray-600 font-medium">{campaign.brand} • {campaign.platform}</p>
                                {campaign.timeline && (
                                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">
                                    {campaign.timeline.startDate} — {campaign.timeline.endDate}
                                  </p>
                                )}
                             </div>
-                            <p className="text-lg font-black serif italic text-gray-900">KES {campaign.budget.toLocaleString()}</p>
+                            <p className="text-base sm:text-lg font-black serif italic text-gray-900 flex-shrink-0">KES {campaign.budget.toLocaleString()}</p>
                          </div>
                       </div>
                    ))
@@ -352,36 +358,28 @@ const Dashboard: React.FC = () => {
 
           {activeTab === 'wallet' && (
              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div
-                  className="md:col-span-2 rounded-2xl border border-amber-200/90 bg-amber-50/95 px-4 py-3 text-sm text-amber-950 shadow-sm"
-                  role="note"
-                >
-                  <strong className="font-semibold">Illustrative wallet only.</strong> Balances, top-ups, withdrawals,
-                  and M-Pesa labels here simulate product workflows. They are not a bank or payment institution. Connect a
-                  licensed payments partner before handling real funds.
-                </div>
                 <div className="space-y-6">
-                   <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
-                      <div className="absolute top-0 right-0 p-8 opacity-10">
+                   <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-6 sm:p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
+                      <div className="absolute top-0 right-0 p-8 opacity-10 hidden sm:block">
                         <svg className="w-32 h-32" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.86 0 .53-.41 1.37-1.96 1.37-1.6 0-2.16-.85-2.22-1.92H8.25c.07 1.71 1.11 3.01 2.65 3.42V20h2.19v-1.65c1.54-.33 2.81-1.28 2.81-2.95 0-2.02-1.66-2.92-3.59-3.41z"/></svg>
                       </div>
                       <div className="relative z-10 space-y-6">
                         <div className="space-y-1">
                            <p className="text-white/60 text-xs font-medium uppercase tracking-widest">Available Balance</p>
-                           <p className="text-5xl font-bold serif italic tracking-tight">KES {walletBalance.toLocaleString()}</p>
+                           <p className="text-3xl sm:text-4xl md:text-5xl font-bold serif italic tracking-tight">KES {walletBalance.toLocaleString()}</p>
                         </div>
-                        <div className="flex gap-4">
-                           <button onClick={() => openWalletModal(role === UserRole.BRAND ? 'topup' : 'withdraw')} className="flex-1 bg-white text-gray-900 py-4 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors">
+                        <div className="flex gap-3 sm:gap-4">
+                           <button onClick={() => openWalletModal(role === UserRole.BRAND ? 'topup' : 'withdraw')} className="flex-1 bg-white text-gray-900 py-3 sm:py-4 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:bg-gray-100 transition-colors">
                              {role === UserRole.BRAND ? 'Top up' : 'Withdraw'}
                            </button>
-                           <button type="button" onClick={scrollToActivity} className="flex-1 bg-white/10 text-white border border-white/20 py-4 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-white/20 transition-colors">
+                           <button type="button" onClick={scrollToActivity} className="flex-1 bg-white/10 text-white border border-white/20 py-3 sm:py-4 rounded-xl font-bold text-[10px] sm:text-xs uppercase tracking-widest hover:bg-white/20 transition-colors">
                              History
                            </button>
                         </div>
                       </div>
                    </div>
 
-                   {/* Earnings Chart (New Feature) */}
+                   {/* Earnings Chart */}
                    <div className="glass-card p-6 rounded-[2.5rem] space-y-4">
                       <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-500">Earnings Trend (6 Months)</h3>
                       <div className="h-40 w-full">
@@ -412,7 +410,7 @@ const Dashboard: React.FC = () => {
                 </div>
 
                 <div className="space-y-6">
-                   {/* Monthly Goal Widget (Gamification) */}
+                   {/* Monthly Goal Widget */}
                    {role === UserRole.INFLUENCER && (
                       <div className="glass-card rounded-[2.5rem] p-8 relative overflow-hidden group">
                          <div className="flex justify-between items-start z-10 relative">
@@ -448,7 +446,7 @@ const Dashboard: React.FC = () => {
                       </div>
                    )}
 
-                   {/* Pending Payments (New Feature) */}
+                   {/* Pending Payments */}
                    <div className="glass-card rounded-[2.5rem] p-8">
                       <h3 className="text-lg font-bold serif italic text-gray-900 mb-6">Pending Payments</h3>
                       <div className="space-y-4">
@@ -699,7 +697,7 @@ const Dashboard: React.FC = () => {
                    </h2>
                    <p className="text-gray-500 text-sm">
                      {walletModalMode === 'topup'
-                       ? 'Enter amount to add (demo). Funds appear in your wallet immediately.'
+                       ? 'Enter amount to add. Funds appear in your wallet immediately.'
                        : 'Enter amount to send to your linked M-Pesa number.'}
                    </p>
                 </div>

@@ -108,7 +108,7 @@ const Onboarding: React.FC = () => {
                 <div className="p-2 bg-[#FF5500]/10 rounded-xl text-[#FF5500]">
                   <Building2 className="w-6 h-6" />
                 </div>
-                <h2 className="text-3xl font-black serif italic brand-text">Company details</h2>
+                <h2 className="text-2xl sm:text-3xl font-black serif italic brand-text">Company details</h2>
               </div>
               <p className="text-sm text-gray-500 font-medium">Share brand profile information.</p>
             </div>
@@ -158,7 +158,7 @@ const Onboarding: React.FC = () => {
                 <div className="p-2 bg-[#FF5500]/10 rounded-xl text-[#FF5500]">
                   <Target className="w-6 h-6" />
                 </div>
-                <h2 className="text-3xl font-black serif italic brand-text">Campaign goals</h2>
+                <h2 className="text-2xl sm:text-3xl font-black serif italic brand-text">Campaign goals</h2>
               </div>
               <p className="text-sm text-gray-500 font-medium">What are you looking to achieve?</p>
             </div>
@@ -185,7 +185,7 @@ const Onboarding: React.FC = () => {
                 <div className="p-2 bg-[#FF5500]/10 rounded-xl text-[#FF5500]">
                   <Wallet className="w-6 h-6" />
                 </div>
-                <h2 className="text-3xl font-black serif italic brand-text">Budget range</h2>
+                <h2 className="text-2xl sm:text-3xl font-black serif italic brand-text">Budget range</h2>
               </div>
               <p className="text-sm text-gray-500 font-medium">Select your typical campaign budget.</p>
             </div>
@@ -220,7 +220,7 @@ const Onboarding: React.FC = () => {
                 <div className="p-2 bg-[#FF5500]/10 rounded-xl text-[#FF5500]">
                   <User className="w-6 h-6" />
                 </div>
-                <h2 className="text-3xl font-black serif italic brand-text">Profile details</h2>
+                <h2 className="text-2xl sm:text-3xl font-black serif italic brand-text">Profile details</h2>
               </div>
               <p className="text-sm text-gray-500 font-medium">Let brands know who you are.</p>
             </div>
@@ -266,7 +266,7 @@ const Onboarding: React.FC = () => {
                 <div className="p-2 bg-[#FF5500]/10 rounded-xl text-[#FF5500]">
                   <Link className="w-6 h-6" />
                 </div>
-                <h2 className="text-3xl font-black serif italic brand-text">Social links</h2>
+                <h2 className="text-2xl sm:text-3xl font-black serif italic brand-text">Social links</h2>
               </div>
               <p className="text-sm text-gray-500 font-medium">Connect your platforms.</p>
             </div>
@@ -318,7 +318,7 @@ const Onboarding: React.FC = () => {
                 <div className="p-2 bg-[#FF5500]/10 rounded-xl text-[#FF5500]">
                   <Tags className="w-6 h-6" />
                 </div>
-                <h2 className="text-3xl font-black serif italic brand-text">Content categories</h2>
+                <h2 className="text-2xl sm:text-3xl font-black serif italic brand-text">Content categories</h2>
               </div>
               <p className="text-sm text-gray-500 font-medium">What do you create content about?</p>
             </div>
@@ -364,7 +364,7 @@ const Onboarding: React.FC = () => {
             <button
               type="button"
               onClick={handleBack}
-              className="px-6 py-4 rounded-xl text-xs font-black uppercase tracking-widest border border-white/50 bg-white/50 hover:bg-white transition-all text-gray-600 flex items-center gap-2"
+              className="px-4 sm:px-6 py-3 sm:py-4 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest border border-white/50 bg-white/50 hover:bg-white transition-all text-gray-600 flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" /> Back
             </button>
@@ -373,11 +373,11 @@ const Onboarding: React.FC = () => {
             type="button"
             onClick={step === 3 ? handleComplete : handleNext}
             disabled={isLoading}
-            className="flex-1 py-4 button-brand rounded-xl text-xs font-black uppercase tracking-widest shadow-xl active:scale-95 transition-transform disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 py-3 sm:py-4 button-brand rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest shadow-xl active:scale-95 transition-transform disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isLoading ? 'Saving...' : step === 3 ? (
               <>
-                Complete setup <CheckCircle2 className="w-4 h-4" />
+                Complete <CheckCircle2 className="w-4 h-4" />
               </>
             ) : (
               <>

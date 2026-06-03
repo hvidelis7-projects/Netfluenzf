@@ -78,6 +78,7 @@ export interface UserProfile {
   bio?: string;
   location?: string;
   verified: boolean;
+  pushToken?: string;
   // Influencer Specific
   niche?: string[];
   followers?: number;

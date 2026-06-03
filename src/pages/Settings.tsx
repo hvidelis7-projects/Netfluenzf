@@ -91,7 +91,7 @@ const Settings: React.FC = () => {
             </button>
           </>
         ) : (
-          <p className="text-sm text-gray-600">Demo mode uses local sign-in only. Enable Firebase to use password reset.</p>
+          <p className="text-sm text-gray-600">Password reset is available after Firebase authentication is configured.</p>
         )}
       </section>
 

@@ -64,6 +64,7 @@ function mapProfileDoc(id: string, data: Record<string, unknown>): UserProfile |
           bio: (data.bio as string) || '',
           location: (data.location as string) || '',
           budgetRange: (data.budgetRange as string) || '—',
+          targetAudience: (data.targetAudience as string) || '',
         }
       : {
           id,
@@ -78,6 +79,8 @@ function mapProfileDoc(id: string, data: Record<string, unknown>): UserProfile |
           location: (data.location as string) || '',
           budgetRange: (data.budgetRange as string) || '—',
           bio: (data.bio as string) || '',
+          platformLinks: Array.isArray(data.platformLinks) ? data.platformLinks : [],
+          portfolio: Array.isArray(data.portfolio) ? data.portfolio : [],
         };
   return base as UserProfile;
 }
@@ -169,7 +172,23 @@ export async function upsertProfileRow(
 
 export async function mergeProfileFields(
   userId: string,
-  partial: Partial<{ displayName: string; avatarUrl: string; email: string; verified: boolean }>
+  partial: Partial<{
+    displayName: string;
+    avatarUrl: string;
+    email: string;
+    verified: boolean;
+    bio: string;
+    location: string;
+    niche: string[];
+    followers: number;
+    engagementRate: number;
+    platformLinks: { platform: string; url: string }[];
+    portfolio: string[];
+    industry: string;
+    website: string;
+    targetAudience: string;
+    budgetRange: string;
+  }>
 ): Promise<void> {
   // Invalidate public creator profiles cache on edits
   delete firestoreCache.influencerProfiles;
