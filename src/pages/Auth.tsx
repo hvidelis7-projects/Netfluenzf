@@ -83,9 +83,9 @@ const Auth: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-5 py-20">
-      <div className="w-full max-w-md bg-white/60 backdrop-blur-xl border border-white/50 p-8 rounded-[2.5rem] shadow-2xl animate-in fade-in zoom-in duration-500">
-        <div className="text-center space-y-2 mb-8">
+    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 py-8 sm:py-12">
+      <div className="w-full max-w-sm sm:max-w-md bg-white/60 backdrop-blur-xl border border-white/50 p-6 sm:p-8 rounded-[2rem] shadow-2xl animate-in fade-in zoom-in duration-500">
+        <div className="text-center space-y-2 mb-6 sm:mb-8">
           <h2 className="text-2xl sm:text-3xl font-black serif italic brand-text tracking-tight">
             {isLogin ? 'Welcome back' : 'Create account'}
           </h2>
