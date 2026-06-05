@@ -359,6 +359,17 @@ const Dashboard: React.FC = () => {
           {activeTab === 'wallet' && (
              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
+                   {/* Beta Phase Notice */}
+                   <div className="bg-orange-500/10 border border-orange-500/20 text-orange-900 px-5 py-4 rounded-[2rem] flex items-start gap-3 text-xs leading-normal font-medium shadow-sm">
+                      <span className="text-base">⚠️</span>
+                      <div>
+                        <p className="font-bold text-orange-950">Beta Feature Notice</p>
+                        <p className="text-[11px] text-orange-900/80 mt-0.5">
+                          Real-money settlement features (such as M-Pesa withdrawals and banking deposits) are currently simulated. Full live integrations will roll out after the beta phase.
+                        </p>
+                      </div>
+                   </div>
+
                    <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-6 sm:p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
                       <div className="absolute top-0 right-0 p-8 opacity-10 hidden sm:block">
                         <svg className="w-32 h-32" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.86 0 .53-.41 1.37-1.96 1.37-1.6 0-2.16-.85-2.22-1.92H8.25c.07 1.71 1.11 3.01 2.65 3.42V20h2.19v-1.65c1.54-.33 2.81-1.28 2.81-2.95 0-2.02-1.66-2.92-3.59-3.41z"/></svg>
@@ -700,6 +711,14 @@ const Dashboard: React.FC = () => {
                        ? 'Enter amount to add. Funds appear in your wallet immediately.'
                        : 'Enter amount to send to your linked M-Pesa number.'}
                    </p>
+                </div>
+
+                {/* Beta Simulation Label */}
+                <div className="bg-orange-500/10 border border-orange-500/20 text-orange-950 p-4 rounded-2xl flex items-start gap-2.5 text-left text-[10px] sm:text-xs leading-normal font-medium shadow-sm">
+                   <span className="text-sm mt-0.5">⚠️</span>
+                   <div>
+                     <span className="font-bold">Beta Simulation:</span> Real-money transactions are simulated during the beta testing phase and will go live after beta.
+                   </div>
                 </div>
                 <input 
                   type="number" 
