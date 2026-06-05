@@ -60,11 +60,27 @@ export const TrifluenzLogo: React.FC<{ className?: string }> = ({ className = 'w
   return (
     <svg viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-hidden>
       <defs>
-        <linearGradient id={`${uid}-ring`} x1="94" y1="24" x2="162" y2="84" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#FFE066" />
-          <stop offset="0.45" stopColor="#FF5500" />
-          <stop offset="1" stopColor="#FF3366" />
+        {/* Unified sleek space-gray metallic gradient for structure */}
+        <linearGradient id={`${uid}-metal`} x1="0" y1="120" x2="256" y2="220" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#1E293B" />
+          <stop offset="0.5" stopColor="#475569" />
+          <stop offset="1" stopColor="#0F172A" />
         </linearGradient>
+        
+        {/* Polished metal ball feet gradient */}
+        <radialGradient id={`${uid}-foot`} cx="35%" cy="35%" r="65%">
+          <stop offset="0" stopColor="#64748B" />
+          <stop offset="0.75" stopColor="#1E293B" />
+          <stop offset="1" stopColor="#0F172A" />
+        </radialGradient>
+
+        {/* Premium glowing jewel gradient for the aperture ring */}
+        <linearGradient id={`${uid}-ring`} x1="94" y1="24" x2="162" y2="84" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#FFD000" />
+          <stop offset="0.5" stopColor="#FF5500" />
+          <stop offset="1" stopColor="#FF0055" />
+        </linearGradient>
+
         <radialGradient
           id={`${uid}-ringFill`}
           cx="0"
@@ -73,10 +89,12 @@ export const TrifluenzLogo: React.FC<{ className?: string }> = ({ className = 'w
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(128 54) rotate(90) scale(36)"
         >
-          <stop offset="0" stopColor="#312E81" />
-          <stop offset="0.55" stopColor="#1E1B4B" />
-          <stop offset="1" stopColor="#FF5500" stopOpacity="0.35" />
+          <stop offset="0" stopColor="#1E1B4B" />
+          <stop offset="0.75" stopColor="#0B0926" />
+          <stop offset="1" stopColor="#FF5500" stopOpacity="0.2" />
         </radialGradient>
+
+        {/* Cohesive, warm iris blades */}
         <linearGradient id={`${uid}-bladeA`} x1="128" y1="28" x2="128" y2="60" gradientUnits="userSpaceOnUse">
           <stop offset="0" stopColor="#FFF3B0" />
           <stop offset="0.5" stopColor="#FFB020" />
@@ -92,6 +110,7 @@ export const TrifluenzLogo: React.FC<{ className?: string }> = ({ className = 'w
           <stop offset="0.45" stopColor="#FF6688" />
           <stop offset="1" stopColor="#FF4400" />
         </linearGradient>
+
         <radialGradient
           id={`${uid}-iris`}
           cx="0"
@@ -105,41 +124,10 @@ export const TrifluenzLogo: React.FC<{ className?: string }> = ({ className = 'w
           <stop offset="0.75" stopColor="#FF8833" />
           <stop offset="1" stopColor="#FF3300" />
         </radialGradient>
-        <linearGradient id={`${uid}-stem`} x1="128" y1="86" x2="128" y2="110" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#A78BFA" />
-          <stop offset="0.5" stopColor="#FF8833" />
-          <stop offset="1" stopColor="#FF5500" />
-        </linearGradient>
-        <linearGradient id={`${uid}-legL`} x1="128" y1="118" x2="40" y2="210" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#818CF8" />
-          <stop offset="0.45" stopColor="#FF8833" />
-          <stop offset="1" stopColor="#FF3300" />
-        </linearGradient>
-        <linearGradient id={`${uid}-legR`} x1="128" y1="118" x2="216" y2="210" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#C084FC" />
-          <stop offset="0.45" stopColor="#FF6644" />
-          <stop offset="1" stopColor="#FF2255" />
-        </linearGradient>
-        <linearGradient id={`${uid}-legC`} x1="128" y1="118" x2="128" y2="224" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#FFB020" />
-          <stop offset="0.5" stopColor="#FF5500" />
-          <stop offset="1" stopColor="#E03000" />
-        </linearGradient>
-        <radialGradient
-          id={`${uid}-hub`}
-          cx="0"
-          cy="0"
-          r="1"
-          gradientUnits="userSpaceOnUse"
-          gradientTransform="translate(128 116) rotate(90) scale(12)"
-        >
-          <stop offset="0" stopColor="#FFE566" />
-          <stop offset="0.6" stopColor="#FF5500" />
-          <stop offset="1" stopColor="#FF3366" />
-        </radialGradient>
+
         <filter id={`${uid}-glow`} x="-40%" y="-40%" width="180%" height="180%">
-          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#FF8833" floodOpacity="0.55" />
-          <feDropShadow dx="0" dy="6" stdDeviation="10" floodColor="#FF4400" floodOpacity="0.28" />
+          <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#FF8833" floodOpacity="0.45" />
+          <feDropShadow dx="0" dy="6" stdDeviation="10" floodColor="#FF4400" floodOpacity="0.22" />
         </filter>
         <filter id={`${uid}-bloom`} x="-50%" y="-50%" width="200%" height="200%">
           <feGaussianBlur stdDeviation="4" result="blur" />
@@ -150,15 +138,81 @@ export const TrifluenzLogo: React.FC<{ className?: string }> = ({ className = 'w
         </filter>
       </defs>
 
-      {/* Ambient colour wash behind mark */}
-      <ellipse cx="128" cy="130" rx="88" ry="96" fill="#FF5500" opacity="0.07" />
-      <ellipse cx="128" cy="54" rx="42" ry="38" fill="#FF8833" opacity="0.12" />
+      {/* Ambient background glow wash behind the glass lens */}
+      <ellipse cx="128" cy="130" rx="88" ry="96" fill="#FF5500" opacity="0.04" />
+      <ellipse cx="128" cy="54" rx="42" ry="38" fill="#FF8833" opacity="0.08" />
 
+      {/* Ambient drop shadow under the main logo */}
       <g filter={`url(#${uid}-glow)`}>
-        {/* Aperture ring */}
+        {/* Sleek metallic tripod legs */}
+        <path
+          d="M128 124 Q96 160 40 208"
+          stroke={`url(#${uid}-metal)`}
+          strokeWidth="11"
+          strokeLinecap="round"
+          fill="none"
+        />
+        <path
+          d="M128 124 Q160 160 216 208"
+          stroke={`url(#${uid}-metal)`}
+          strokeWidth="11"
+          strokeLinecap="round"
+          fill="none"
+        />
+        <path
+          d="M128 124 L128 222"
+          stroke={`url(#${uid}-metal)`}
+          strokeWidth="9"
+          strokeLinecap="round"
+          fill="none"
+        />
+
+        {/* Sharp highlights along the metallic legs */}
+        <path
+          d="M128 130 Q100 164 50 204"
+          stroke="#FFFFFF"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.22"
+        />
+        <path
+          d="M128 130 Q156 164 206 204"
+          stroke="#FFFFFF"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.22"
+        />
+        <path
+          d="M128 134 L128 214"
+          stroke="#FFFFFF"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.18"
+        />
+
+        {/* Sleek metallic ball feet */}
+        <circle cx="40" cy="208" r="7" fill={`url(#${uid}-foot)`} />
+        <circle cx="216" cy="208" r="7" fill={`url(#${uid}-foot)`} />
+        <circle cx="128" cy="222" r="6.5" fill={`url(#${uid}-foot)`} />
+        <circle cx="40" cy="208" r="2" fill="#FFFFFF" opacity="0.3" />
+        <circle cx="216" cy="208" r="2" fill="#FFFFFF" opacity="0.3" />
+        <circle cx="128" cy="222" r="1.8" fill="#FFFFFF" opacity="0.3" />
+
+        {/* Sleek Y-junction hub */}
+        <circle cx="128" cy="116" r="8" fill={`url(#${uid}-metal)`} stroke="#475569" strokeWidth="1" />
+        <circle cx="128" cy="116" r="3" fill="#FFFFFF" opacity="0.2" />
+
+        {/* Sleek metallic stem */}
+        <rect x="120" y="86" width="16" height="26" rx="3" fill={`url(#${uid}-metal)`} />
+        <rect x="123" y="88" width="2" height="22" rx="1" fill="#FFFFFF" opacity="0.15" />
+
+        {/* Glowing aperture ring */}
         <circle cx="128" cy="54" r="34" stroke={`url(#${uid}-ring)`} strokeWidth="5.5" fill={`url(#${uid}-ringFill)`} />
 
-        {/* 3 iris blades — distinct warm hues */}
+        {/* 3 aperture blades */}
         <g transform="translate(128 54)">
           <path
             d="M0 -26 C9 -24 16 -16 14 -5 L0 6 L-14 -5 C-16 -16 -9 -24 0 -26 Z"
@@ -176,80 +230,12 @@ export const TrifluenzLogo: React.FC<{ className?: string }> = ({ className = 'w
           />
         </g>
 
-        {/* Inner iris + lens bloom */}
+        {/* Inner lens core with bloom */}
         <g filter={`url(#${uid}-bloom)`}>
           <circle cx="128" cy="54" r="11" fill={`url(#${uid}-iris)`} />
         </g>
-        <ellipse cx="121" cy="47" rx="9" ry="6" fill="#FFFFFF" opacity="0.45" />
-        <circle cx="133" cy="58" r="2.5" fill="#FFFFFF" opacity="0.6" />
-
-        {/* Mount stem */}
-        <rect x="119" y="86" width="18" height="26" rx="5" fill={`url(#${uid}-stem)`} />
-        <rect x="122" y="88" width="5" height="20" rx="2.5" fill="#FFFFFF" opacity="0.35" />
-
-        {/* Y-junction hub */}
-        <circle cx="128" cy="116" r="11" fill={`url(#${uid}-hub)`} />
-        <circle cx="128" cy="116" r="5.5" fill="#FFFFFF" opacity="0.5" />
-
-        {/* Tripod legs — each a distinct warm gradient */}
-        <path
-          d="M128 124 Q96 160 40 208"
-          stroke={`url(#${uid}-legL)`}
-          strokeWidth="16"
-          strokeLinecap="round"
-          fill="none"
-        />
-        <path
-          d="M128 124 Q160 160 216 208"
-          stroke={`url(#${uid}-legR)`}
-          strokeWidth="16"
-          strokeLinecap="round"
-          fill="none"
-        />
-        <path
-          d="M128 124 L128 222"
-          stroke={`url(#${uid}-legC)`}
-          strokeWidth="12"
-          strokeLinecap="round"
-          fill="none"
-        />
-
-        {/* Leg specular highlights */}
-        <path
-          d="M128 130 Q100 164 50 204"
-          stroke="#FFFFFF"
-          strokeWidth="3.5"
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.28"
-        />
-        <path
-          d="M128 130 Q156 164 206 204"
-          stroke="#FFFFFF"
-          strokeWidth="3.5"
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.28"
-        />
-        <path
-          d="M128 134 L128 214"
-          stroke="#FFFFFF"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.22"
-        />
-
-        {/* Rubber feet — jewel-tone accents */}
-        <circle cx="40" cy="208" r="11" fill="#4C1D95" />
-        <circle cx="216" cy="208" r="11" fill="#9D174D" />
-        <circle cx="128" cy="222" r="10" fill="#C2410C" />
-        <circle cx="40" cy="208" r="6" fill="#FFB020" />
-        <circle cx="216" cy="208" r="6" fill="#FF6688" />
-        <circle cx="128" cy="222" r="5.5" fill="#FF8833" />
-        <circle cx="40" cy="208" r="2.5" fill="#FFFFFF" opacity="0.7" />
-        <circle cx="216" cy="208" r="2.5" fill="#FFFFFF" opacity="0.7" />
-        <circle cx="128" cy="222" r="2" fill="#FFFFFF" opacity="0.65" />
+        <ellipse cx="121" cy="47" rx="9" ry="6" fill="#FFFFFF" opacity="0.4" />
+        <circle cx="133" cy="58" r="2.5" fill="#FFFFFF" opacity="0.55" />
       </g>
     </svg>
   );
