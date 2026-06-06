@@ -122,7 +122,8 @@ const Layout: React.FC = () => {
         navigate(`/#${sectionId}`);
         return;
       }
-      document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.getElementById(sectionId)?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
     });
   };
 
@@ -132,6 +133,18 @@ const Layout: React.FC = () => {
     }`;
 
   const isHomePage = currentPage === 'home';
+  useEffect(() => {
+    if (!isHomePage || !location.hash) return;
+    const sectionId = location.hash.replace('#', '');
+    const raf = window.requestAnimationFrame(() => {
+      const target = document.getElementById(sectionId);
+      if (!target) return;
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    });
+    return () => window.cancelAnimationFrame(raf);
+  }, [isHomePage, location.hash]);
+
   /** Translucent dark nav over hero photography (readable + premium). */
   const navGlassHero = isHomePage && !scrolled && !isMobileMenuOpen;
 
@@ -277,6 +290,13 @@ const Layout: React.FC = () => {
                         className={homeAnchorClass(navGlassHero)}
                       >
                         Creators
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => scrollToHomeSection('how-it-works')}
+                        className={homeAnchorClass(navGlassHero)}
+                      >
+                        How it works
                       </button>
                     </>
                   )}
@@ -511,6 +531,14 @@ const Layout: React.FC = () => {
                           className="group flex w-full items-center justify-between rounded-2xl border border-white/90 bg-white/80 px-5 py-[1.125rem] text-left shadow-[0_2px_16px_-6px_rgba(0,0,0,0.06),inset_0_1px_0_0_rgba(255,255,255,1)] transition-all duration-300 hover:border-brand/25 hover:shadow-[0_12px_40px_-16px_rgba(255,85,0,0.22)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-[0.99] motion-reduce:transition-none"
                         >
                           <span className="text-[15px] font-semibold tracking-tight text-gray-900">For creators</span>
+                          <ChevronRight className="h-5 w-5 shrink-0 text-brand/50" strokeWidth={2} aria-hidden />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => scrollToHomeSection('how-it-works')}
+                          className="group flex w-full items-center justify-between rounded-2xl border border-white/90 bg-white/80 px-5 py-[1.125rem] text-left shadow-[0_2px_16px_-6px_rgba(0,0,0,0.06),inset_0_1px_0_0_rgba(255,255,255,1)] transition-all duration-300 hover:border-brand/25 hover:shadow-[0_12px_40px_-16px_rgba(255,85,0,0.22)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand active:scale-[0.99] motion-reduce:transition-none"
+                        >
+                          <span className="text-[15px] font-semibold tracking-tight text-gray-900">How it works</span>
                           <ChevronRight className="h-5 w-5 shrink-0 text-brand/50" strokeWidth={2} aria-hidden />
                         </button>
                       </>

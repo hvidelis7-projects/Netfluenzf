@@ -24,6 +24,11 @@ export const HomeSectionReveal: React.FC<HomeSectionRevealProps> = ({
       return;
     }
 
+    if (typeof window.IntersectionObserver === 'undefined') {
+      setVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) {

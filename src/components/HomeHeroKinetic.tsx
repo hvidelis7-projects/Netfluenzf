@@ -20,7 +20,7 @@ const trustChipLabels = [
 ] as const;
 
 const HERO_TITLE_PLAIN =
-  "Formalize, structure, and scale Africa's influencer economy. We replace informal deals with data, transparency, and performance. Unlocking access at continent scale.";
+  "Formalize, structure, and scale Africa's influencer economy. Trifluenz helps brands run measurable creator campaigns and helps creators earn through transparent workflows.";
 
 const easeOut = [0.16, 1, 0.32, 1] as const;
 
@@ -70,9 +70,8 @@ export const HomeHeroKinetic: React.FC<HomeHeroKineticProps> = ({ onPrimaryCta }
                 Africa&apos;s influencer economy.
               </span>
             </span>
-            <span className="block max-w-prose font-sans text-base font-medium leading-snug tracking-tight text-white md:text-lg md:leading-relaxed lg:text-xl lg:max-w-2xl [text-shadow:0_2px_32px_rgba(0,0,0,0.65),0_1px_12px_rgba(0,0,0,0.5)]">
-              We replace informal deals with data, transparency, and performance.
-              <span className="hidden md:inline"> Unlocking access at continent scale.</span>
+            <span className="block max-w-prose font-sans text-base font-medium leading-snug tracking-tight text-white md:text-lg md:leading-relaxed lg:max-w-2xl lg:text-xl [text-shadow:0_2px_32px_rgba(0,0,0,0.65),0_1px_12px_rgba(0,0,0,0.5)]">
+              Trifluenz helps brands run measurable creator campaigns and helps creators earn through transparent workflows.
             </span>
           </span>
         </h1>
@@ -91,16 +90,18 @@ export const HomeHeroKinetic: React.FC<HomeHeroKineticProps> = ({ onPrimaryCta }
           type="button"
           onClick={onPrimaryCta}
           className="inline-flex w-full items-center justify-center gap-2 rounded-full px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand/25 transition active:scale-[0.99] motion-reduce:transition-none sm:w-auto button-brand"
+          aria-label="Create a Trifluenz account"
         >
-          Create account
+          Start free account
           <ArrowUpRight className="h-4 w-4 shrink-0" strokeWidth={2.25} aria-hidden />
         </button>
         <Link
           to="/auth"
           onClick={() => playSound('click')}
           className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/30 bg-white/5 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition hover:border-white/45 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:w-auto"
+          aria-label="Sign in to your Trifluenz account"
         >
-          Sign in
+          I already have an account
           <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2.25} aria-hidden />
         </Link>
       </motion.div>

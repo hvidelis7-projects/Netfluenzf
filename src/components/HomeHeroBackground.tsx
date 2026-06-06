@@ -30,7 +30,7 @@ const HomeHeroBackground: React.FC = () => {
       setIndex((i) => (i + 1) % HOME_HERO_BACKGROUNDS.length);
     }, ROTATION_MS);
     return () => window.clearInterval(id);
-  }, [reduceMotion]);
+  }, [reduceMotion, setIndex]);
 
   return (
     <>

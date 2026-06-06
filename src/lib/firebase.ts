@@ -17,9 +17,9 @@ import {
 } from 'firebase/firestore';
 import { getMessaging, isSupported, type Messaging } from 'firebase/messaging';
 
-const apiKey = import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyBOF2nx1tcP0nSmqMAL1RZ9tZmSfKOHXcY';
-const authDomain = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'netfluenz-779d1.firebaseapp.com';
-const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID || 'netfluenz-779d1';
+const apiKey = (import.meta.env.VITE_FIREBASE_API_KEY as string | undefined)?.trim();
+const authDomain = (import.meta.env.VITE_FIREBASE_AUTH_DOMAIN as string | undefined)?.trim();
+const projectId = (import.meta.env.VITE_FIREBASE_PROJECT_ID as string | undefined)?.trim();
 
 /** True when Firestore is initialized (same condition as full Firebase client). */
 export function isFirestoreConfigured(): boolean {
@@ -43,13 +43,17 @@ let db: Firestore | null = null;
 let messaging: Messaging | null = null;
 
 if (isFirebaseConfigured()) {
+  const configuredApiKey = apiKey as string;
+  const configuredAuthDomain = authDomain as string;
+  const configuredProjectId = projectId as string;
+
   const config: FirebaseOptions = {
-    apiKey,
-    authDomain,
-    projectId,
-    appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:502792375649:web:baa854947cf67769854920',
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '502792375649',
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'netfluenz-779d1.firebasestorage.app',
+    apiKey: configuredApiKey,
+    authDomain: configuredAuthDomain,
+    projectId: configuredProjectId,
+    appId: (import.meta.env.VITE_FIREBASE_APP_ID as string | undefined)?.trim(),
+    messagingSenderId: (import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID as string | undefined)?.trim(),
+    storageBucket: (import.meta.env.VITE_FIREBASE_STORAGE_BUCKET as string | undefined)?.trim(),
   };
 
   app = initializeApp(config);

@@ -465,6 +465,23 @@ body:has(.home-brand)::before {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, transparent 35%);
 }
 
+/** Hero scroll affordance: subtle pulse for discoverability. */
+@keyframes home-scroll-cue-pulse {
+  0%,
+  100% {
+    opacity: 0.62;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(1px);
+  }
+}
+
+.home-scroll-cue {
+  animation: home-scroll-cue-pulse 2.2s ease-in-out infinite;
+}
+
 /** Hero trust chips: subtle glass + premium readability on dark photography. */
 .home-premium-chip {
   display: inline-flex;
@@ -829,6 +846,9 @@ body:has(.home-brand)::before {
     row-gap: 1rem;
   }
   .home-hero-ken-burns {
+    animation: none;
+  }
+  .home-scroll-cue {
     animation: none;
   }
   .home-brand .home-hero-brand-text.home-hero-brand-text--shimmer {

@@ -10,7 +10,7 @@ import { playSound } from '../audio.ts';
 import { auth, needsPasswordEmailVerification } from '../lib/firebase';
 
 const Auth: React.FC = () => {
-  const { addNotification, authSignIn, authSignUp, authSignInWithGoogle, authReady } = useApp();
+  const { authSignIn, authSignUp, authSignInWithGoogle, authReady, useFirebaseAuth } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as { from?: string } | null)?.from ?? '/dashboard';
@@ -19,18 +19,27 @@ const Auth: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [selectedRole, setSelectedRole] = useState<UserRole>(UserRole.BRAND);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingAction, setLoadingAction] = useState<'form' | 'google' | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const isFormLoading = loadingAction === 'form';
+  const isGoogleLoading = loadingAction === 'google';
+  const isBusy = loadingAction !== null;
+
+  const handleTabChange = (nextIsLogin: boolean) => {
+    setIsLogin(nextIsLogin);
+    setFormError(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!useFirebaseAuth || isBusy) return;
     setFormError(null);
-    setIsLoading(true);
+    setLoadingAction('form');
     playSound('click');
 
     if (isLogin) {
       const { error } = await authSignIn(email, password);
-      setIsLoading(false);
+      setLoadingAction(null);
       if (error) {
         setFormError(error);
         playSound('click');
@@ -41,7 +50,7 @@ const Auth: React.FC = () => {
       return;
     }
     const { error } = await authSignUp(email, password, selectedRole);
-    setIsLoading(false);
+    setLoadingAction(null);
     if (error) {
       setFormError(error);
       return;
@@ -52,11 +61,12 @@ const Auth: React.FC = () => {
   };
 
   const handleGoogle = async () => {
+    if (!useFirebaseAuth || isBusy) return;
     setFormError(null);
-    setIsLoading(true);
+    setLoadingAction('google');
     playSound('click');
     const { error } = await authSignInWithGoogle(!isLogin, selectedRole);
-    setIsLoading(false);
+    setLoadingAction(null);
     if (error) {
       setFormError(error);
       return;
@@ -84,7 +94,7 @@ const Auth: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 py-8 sm:py-12">
-      <div className="w-full max-w-sm sm:max-w-md bg-white/60 backdrop-blur-xl border border-white/50 p-6 sm:p-8 rounded-[2rem] shadow-2xl animate-in fade-in zoom-in duration-500">
+      <div className="w-full max-w-sm sm:max-w-md bg-white/60 backdrop-blur-xl border border-white/50 p-5 sm:p-8 rounded-[2rem] shadow-2xl animate-in fade-in zoom-in duration-500">
         <div className="text-center space-y-2 mb-6 sm:mb-8">
           <h2 className="text-2xl sm:text-3xl font-black serif italic brand-text tracking-tight">
             {isLogin ? 'Welcome back' : 'Create account'}
@@ -108,8 +118,8 @@ const Auth: React.FC = () => {
         <div className="flex bg-gray-100/50 p-1 rounded-full mb-8">
           <button
             type="button"
-            onClick={() => setIsLogin(true)}
-            className={`flex-1 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+            onClick={() => handleTabChange(true)}
+            className={`flex-1 py-2.5 rounded-full text-[11px] font-black uppercase tracking-widest transition-all ${
               isLogin ? 'bg-white shadow-md text-[#FF5500]' : 'text-gray-500 hover:text-gray-900'
             }`}
           >
@@ -117,14 +127,24 @@ const Auth: React.FC = () => {
           </button>
           <button
             type="button"
-            onClick={() => setIsLogin(false)}
-            className={`flex-1 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+            onClick={() => handleTabChange(false)}
+            className={`flex-1 py-2.5 rounded-full text-[11px] font-black uppercase tracking-widest transition-all ${
               !isLogin ? 'bg-white shadow-md text-[#FF5500]' : 'text-gray-500 hover:text-gray-900'
             }`}
           >
             Register
           </button>
         </div>
+
+        {!useFirebaseAuth && (
+          <div className="mb-6 rounded-2xl border border-amber-200/90 bg-amber-50/90 px-4 py-3 text-sm text-amber-900">
+            <p className="font-bold">Sign-in unavailable</p>
+            <p className="mt-1 text-xs sm:text-sm">
+              Firebase authentication is not configured for this environment yet. Add the required
+              `VITE_FIREBASE_*` values to enable email and Google sign-in.
+            </p>
+          </div>
+        )}
 
         <form onSubmit={(e) => void handleSubmit(e)} className="space-y-5" noValidate>
           {!isLogin && (
@@ -134,22 +154,24 @@ const Auth: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedRole(UserRole.BRAND)}
+                  disabled={!useFirebaseAuth || isBusy}
                   className={`py-3 rounded-xl border-2 text-xs font-bold transition-all ${
                     selectedRole === UserRole.BRAND
                       ? 'border-[#FF5500] bg-[#FF5500]/5 text-[#FF5500]'
                       : 'border-transparent bg-white/50 text-gray-600 hover:bg-white'
-                  }`}
+                  } disabled:opacity-60 disabled:cursor-not-allowed`}
                 >
                   Brand
                 </button>
                 <button
                   type="button"
                   onClick={() => setSelectedRole(UserRole.INFLUENCER)}
+                  disabled={!useFirebaseAuth || isBusy}
                   className={`py-3 rounded-xl border-2 text-xs font-bold transition-all ${
                     selectedRole === UserRole.INFLUENCER
                       ? 'border-[#FF5500] bg-[#FF5500]/5 text-[#FF5500]'
                       : 'border-transparent bg-white/50 text-gray-600 hover:bg-white'
-                  }`}
+                  } disabled:opacity-60 disabled:cursor-not-allowed`}
                 >
                   Creator
                 </button>
@@ -168,6 +190,7 @@ const Auth: React.FC = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={!useFirebaseAuth || isBusy}
               className="w-full bg-white/80 border border-white/50 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#FF5500] focus:ring-1 focus:ring-[#FF5500] transition-all"
               placeholder="name@example.com"
             />
@@ -184,6 +207,7 @@ const Auth: React.FC = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={!useFirebaseAuth || isBusy}
               className="w-full bg-white/80 border border-white/50 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#FF5500] focus:ring-1 focus:ring-[#FF5500] transition-all"
               placeholder="••••••••"
               minLength={6}
@@ -198,14 +222,16 @@ const Auth: React.FC = () => {
 
           <button
             type="submit"
-            disabled={isLoading}
-            className="w-full py-3 sm:py-4 button-brand rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest shadow-xl active:scale-95 transition-transform disabled:opacity-70 disabled:cursor-not-allowed mt-4"
+            disabled={!useFirebaseAuth || isBusy}
+            className="w-full py-3.5 sm:py-4 button-brand rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest shadow-xl active:scale-95 transition-transform disabled:opacity-70 disabled:cursor-not-allowed mt-4 flex items-center justify-center gap-2"
           >
-            {isLoading ? 'Please wait...' : isLogin ? 'Log in' : 'Sign up'}
+            {isFormLoading && <span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" aria-hidden />}
+            {isFormLoading ? 'Please wait...' : isLogin ? 'Log in' : 'Sign up'}
           </button>
         </form>
 
-        <div className="mt-8 text-center space-y-4">
+        {useFirebaseAuth && (
+          <div className="mt-8 text-center space-y-4">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300/50" />
@@ -220,30 +246,22 @@ const Auth: React.FC = () => {
           <div className="flex gap-3 justify-center">
             <button
               type="button"
-              disabled={isLoading}
+              disabled={isBusy}
               onClick={() => void handleGoogle()}
-              className="p-3 bg-white rounded-full shadow-sm hover:shadow-md transition-all border border-gray-100 disabled:opacity-50"
+              className="h-12 w-12 flex items-center justify-center bg-white rounded-full shadow-sm hover:shadow-md transition-all border border-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Continue with Google"
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden>
-                <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                playSound('click');
-                addNotification('X sign-in is not available in this build.');
-              }}
-              className="p-3 bg-white rounded-full shadow-sm hover:shadow-md transition-all border border-gray-100"
-              aria-label="Continue with X"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-              </svg>
+              {isGoogleLoading ? (
+                <span className="h-5 w-5 rounded-full border-2 border-[#FF5500] border-t-transparent animate-spin" aria-hidden />
+              ) : (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden>
+                  <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z" />
+                </svg>
+              )}
             </button>
           </div>
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
