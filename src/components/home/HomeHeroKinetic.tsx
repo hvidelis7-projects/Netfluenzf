@@ -6,8 +6,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'motion/react';
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
-import { HOME_PRODUCT_PILLARS } from '../constants';
-import { playSound } from '../audio.ts';
+import { HOME_PRODUCT_PILLARS } from '../../constants';
+import { playSound } from '../../audio.ts';
 
 export type HomeHeroKineticProps = {
   onPrimaryCta: () => void;

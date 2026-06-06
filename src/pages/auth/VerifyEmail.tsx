@@ -4,8 +4,8 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
-import { playSound } from '../audio.ts';
+import { useApp } from '../../context/AppContext';
+import { playSound } from '../../audio.ts';
 
 const VerifyEmail: React.FC = () => {
   const { user, needsEmailVerification, authResendVerificationEmail, authReloadSessionUser, logout, addNotification } =

@@ -4,7 +4,7 @@
 
 import React, { useState } from 'react';
 import { LegalPage } from './LegalPage';
-import { playSound } from '../audio.ts';
+import { playSound } from '../../audio.ts';
 
 const SUPPORT_EMAIL = 'Trifluenz@global.gmail.com';
 

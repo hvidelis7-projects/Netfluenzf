@@ -6,14 +6,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import { TrifluenzLogo, APP_SHELL_BACKGROUND, PwaDownloadIcon } from '../constants';
-import HomeHeroBackground from './HomeHeroBackground';
-import { HomeHeroCarouselProvider } from '../context/HomeHeroCarouselContext';
-import { UserRole } from '../types';
-import { playSound } from '../audio.ts';
-import { useApp } from '../context/AppContext';
-import { navKeyFromPath } from '../lib/navKey';
-import { useModalBackNavigation } from '../hooks/useModalBackNavigation';
+import { TrifluenzLogo, APP_SHELL_BACKGROUND, PwaDownloadIcon } from '../../constants';
+import HomeHeroBackground from '../home/HomeHeroBackground';
+import { HomeHeroCarouselProvider } from '../../context/home/HomeHeroCarouselContext';
+import { UserRole } from '../../types';
+import { playSound } from '../../audio.ts';
+import { useApp } from '../../context/AppContext';
+import { navKeyFromPath } from '../../lib/navKey';
+import { useModalBackNavigation } from '../../hooks/useModalBackNavigation';
 
 interface Toast {
   id: string;
@@ -81,7 +81,7 @@ const Layout: React.FC = () => {
 
     // Register foreground FCM push notification listener
     let unsubForeground: (() => void) | undefined;
-    import('../services/notificationService').then(({ setupForegroundNotificationListener }) => {
+    import('../../services/notificationService').then(({ setupForegroundNotificationListener }) => {
       unsubForeground = setupForegroundNotificationListener((msg) => {
         showToast(msg, 'info');
       });

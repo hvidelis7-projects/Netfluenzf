@@ -4,8 +4,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { HOME_HERO_BACKGROUNDS } from '../constants';
-import { useHomeHeroCarouselOptional } from '../context/HomeHeroCarouselContext';
+import { HOME_HERO_BACKGROUNDS } from '../../constants';
+import { useHomeHeroCarouselOptional } from '../../context/home/HomeHeroCarouselContext';
 
 const ROTATION_MS = 6000;
 

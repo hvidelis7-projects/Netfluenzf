@@ -3,7 +3,7 @@
  */
 
 import React, { createContext, useContext, useMemo, useState } from 'react';
-import { HOME_HERO_BACKGROUNDS } from '../constants';
+import { HOME_HERO_BACKGROUNDS } from '../../constants';
 
 type HomeHeroCarouselContextValue = {
   index: number;

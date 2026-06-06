@@ -4,18 +4,18 @@
 
 import React from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import Layout from './components/Layout';
-import Home from './pages/Home';
+import Layout from './components/layout/Layout';
+import Home from './pages/home/Home';
 import Dashboard from './pages/Dashboard';
 import Marketplace from './pages/Marketplace';
-import Auth from './pages/Auth';
-import VerifyEmail from './pages/VerifyEmail';
+import Auth from './pages/auth/Auth';
+import VerifyEmail from './pages/auth/VerifyEmail';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Onboarding from './pages/Onboarding';
-import Terms from './pages/Terms';
-import Privacy from './pages/Privacy';
-import Contact from './pages/Contact';
+import Terms from './pages/legal/Terms';
+import Privacy from './pages/legal/Privacy';
+import Contact from './pages/legal/Contact';
 import CampaignPage from './pages/CampaignPage';
 import { UserRole } from './types';
 import { AppProvider, useApp } from './context/AppContext';

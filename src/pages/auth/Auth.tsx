@@ -4,10 +4,10 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { UserRole } from '../types';
-import { useApp } from '../context/AppContext';
-import { playSound } from '../audio.ts';
-import { auth, needsPasswordEmailVerification } from '../lib/firebase';
+import { UserRole } from '../../types';
+import { useApp } from '../../context/AppContext';
+import { playSound } from '../../audio.ts';
+import { auth, needsPasswordEmailVerification } from '../../lib/firebase';
 
 const Auth: React.FC = () => {
   const { authSignIn, authSignUp, authSignInWithGoogle, authReady, useFirebaseAuth } = useApp();
