@@ -24,12 +24,26 @@ export function mapFirebaseAuthError(error: unknown, fallback: string): string {
       return 'Popup was blocked. Allow popups and try Google sign-in again.';
     case 'auth/too-many-requests':
       return 'Too many attempts. Please wait a moment and try again.';
+    case 'auth/operation-not-allowed':
+      return 'This sign-in method is not enabled. Contact support if this continues.';
+    case 'auth/invalid-api-key':
+    case 'auth/app-not-authorized':
+      return 'Sign-in is temporarily unavailable. Please try again later or contact support.';
+    case 'auth/user-disabled':
+      return 'This account has been disabled. Contact support for help.';
+    case 'auth/missing-password':
+      return 'Enter your password to continue.';
+    case 'auth/missing-email':
+      return 'Enter your email address to continue.';
     default:
       break;
   }
 
-  if (error instanceof Error && error.message.trim().length > 0) {
-    return error.message;
+  if (error instanceof Error) {
+    const msg = error.message.trim();
+    if (msg.length > 0 && !msg.toLowerCase().includes('firebase')) {
+      return msg;
+    }
   }
   return fallback || DEFAULT_AUTH_ERROR;
 }

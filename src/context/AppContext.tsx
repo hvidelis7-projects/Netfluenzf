@@ -10,6 +10,7 @@ import {
   onAuthStateChanged,
   reload,
   sendEmailVerification,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -44,8 +45,11 @@ interface AppContextType {
   authSignIn: (email: string, password: string) => Promise<{ error: string | null }>;
   authSignUp: (email: string, password: string, role: UserRole) => Promise<{ error: string | null }>;
   authSignInWithGoogle: (isRegister: boolean, roleForNewAccount: UserRole) => Promise<{ error: string | null }>;
+  authSendPasswordReset: (email: string) => Promise<{ error: string | null }>;
   authResendVerificationEmail: () => Promise<{ error: string | null }>;
   authReloadSessionUser: () => Promise<{ verified: boolean; error: string | null }>;
+  /** Resolves once Firestore profile hydration catches up after sign-in/sign-up. */
+  waitForSessionReady: (timeoutMs?: number) => Promise<boolean>;
   updateUserProfile: (profile: Partial<UserProfile>) => void;
 
   role: UserRole;
@@ -118,6 +122,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [authReady, setAuthReady] = useState(!isFirebaseConfigured());
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const firebaseUidRef = useRef<string | null>(null);
+  const userRef = useRef<UserProfile | null>(initial.user);
+  userRef.current = user;
   const pendingOAuthRoleRef = useRef<UserRole | null>(null);
   const lastWrittenDataRef = useRef<string>('');
 
@@ -169,77 +175,86 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [useFirebaseAuth]);
 
+  const ensureUserRecords = useCallback(async (fbUser: FirebaseUser) => {
+    let profile = await loadProfileForUser(fbUser.uid);
+    if (profile) {
+      pendingOAuthRoleRef.current = null;
+      return profile;
+    }
+
+    if (!fbUser.email) return null;
+
+    const roleToUse = pendingOAuthRoleRef.current ?? UserRole.BRAND;
+    pendingOAuthRoleRef.current = null;
+    const displayName = fbUser.displayName || fbUser.email.split('@')[0] || 'User';
+
+    await upsertProfileRow(fbUser.uid, fbUser.email, roleToUse, displayName);
+    await upsertUserData(fbUser.uid, {
+      campaigns: [],
+      transactions: [],
+      walletBalance: 0,
+      escrowBalance: 0,
+      notifications: [],
+    });
+
+    return loadProfileForUser(fbUser.uid);
+  }, []);
+
   const hydrateFromFirebaseUser = useCallback(
     async (fbUser: FirebaseUser | null) => {
       if (!auth) {
         setAuthReady(true);
         return;
       }
-      if (!fbUser) {
-        firebaseUidRef.current = null;
-        setFirebaseUser(null);
+
+      try {
+        if (!fbUser) {
+          firebaseUidRef.current = null;
+          setFirebaseUser(null);
+          applyAuthSession(null, UserRole.GUEST, emptyGuestAccount);
+          await hydrateDiscovery(false, null);
+          return;
+        }
+
+        setFirebaseUser(fbUser);
+        firebaseUidRef.current = fbUser.uid;
+
+        const profile = await ensureUserRecords(fbUser);
+        const row = await loadUserDataRow(fbUser.uid);
+
+        if (!profile || !row) {
+          applyAuthSession(null, UserRole.GUEST, emptyGuestAccount);
+          await hydrateDiscovery(false, null);
+          return;
+        }
+
+        applyAuthSession(profile, profile.role, {
+          campaigns: row.campaigns,
+          transactions: row.transactions,
+          walletBalance: row.walletBalance,
+          escrowBalance: row.escrowBalance,
+          notifications: row.notifications,
+        });
+
+        if (typeof window !== 'undefined' && 'Notification' in window) {
+          import('../services/notificationService').then(({ registerPushNotifications }) => {
+            void registerPushNotifications(fbUser.uid);
+          });
+        }
+
+        await hydrateDiscovery(true, profile);
+      } catch {
+        if (fbUser) {
+          setFirebaseUser(fbUser);
+          firebaseUidRef.current = fbUser.uid;
+        }
         applyAuthSession(null, UserRole.GUEST, emptyGuestAccount);
         await hydrateDiscovery(false, null);
+      } finally {
         setAuthReady(true);
-        return;
       }
-
-      setFirebaseUser(fbUser);
-      firebaseUidRef.current = fbUser.uid;
-      let profile = await loadProfileForUser(fbUser.uid);
-      if (profile) {
-        pendingOAuthRoleRef.current = null;
-      }
-      if (!profile && fbUser.email) {
-        const roleToUse = pendingOAuthRoleRef.current ?? UserRole.BRAND;
-        pendingOAuthRoleRef.current = null;
-        await upsertProfileRow(
-          fbUser.uid,
-          fbUser.email,
-          roleToUse,
-          fbUser.displayName || fbUser.email.split('@')[0] || 'User'
-        );
-        await upsertUserData(fbUser.uid, {
-          campaigns: [],
-          transactions: [],
-          walletBalance: 0,
-          escrowBalance: 0,
-          notifications: [],
-        });
-        profile = await loadProfileForUser(fbUser.uid);
-      }
-
-      const row = await loadUserDataRow(fbUser.uid);
-
-      if (!profile || !row) {
-        await signOut(auth);
-        firebaseUidRef.current = null;
-        setFirebaseUser(null);
-        applyAuthSession(null, UserRole.GUEST, emptyGuestAccount);
-        await hydrateDiscovery(false, null);
-        setAuthReady(true);
-        return;
-      }
-
-      applyAuthSession(profile, profile.role, {
-        campaigns: row.campaigns,
-        transactions: row.transactions,
-        walletBalance: row.walletBalance,
-        escrowBalance: row.escrowBalance,
-        notifications: row.notifications,
-      });
-      
-      // Register Web Push FCM token on authenticating
-      if (typeof window !== 'undefined' && 'Notification' in window) {
-        import('../services/notificationService').then(({ registerPushNotifications }) => {
-          void registerPushNotifications(fbUser.uid);
-        });
-      }
-
-      await hydrateDiscovery(true, profile);
-      setAuthReady(true);
     },
-    [applyAuthSession, hydrateDiscovery]
+    [applyAuthSession, ensureUserRecords, hydrateDiscovery]
   );
 
   // 1. Firebase auth state listener
@@ -320,6 +335,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const authSendPasswordReset = async (email: string): Promise<{ error: string | null }> => {
+    if (!useFirebaseAuth) {
+      return { error: 'Password reset is unavailable until Firebase is configured.' };
+    }
+    if (!auth) return { error: 'Firebase Auth is not configured.' };
+
+    const trimmed = email.trim();
+    if (!trimmed) return { error: 'Enter your email address to reset your password.' };
+
+    try {
+      await sendPasswordResetEmail(auth, trimmed);
+      return { error: null };
+    } catch (e: unknown) {
+      return { error: mapFirebaseAuthError(e, 'Could not send password reset email.') };
+    }
+  };
+
   const authSignInWithGoogle = async (
     isRegister: boolean,
     roleForNewAccount: UserRole
@@ -352,6 +384,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return { error: mapFirebaseAuthError(e, 'Could not send verification email.') };
     }
   };
+
+  const waitForSessionReady = useCallback((timeoutMs = 10000): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const deadline = Date.now() + timeoutMs;
+      const check = () => {
+        const fbUser = auth?.currentUser;
+        const profile = userRef.current;
+        if (fbUser && profile && profile.id === fbUser.uid) {
+          resolve(true);
+          return;
+        }
+        if (Date.now() >= deadline) {
+          resolve(Boolean(fbUser && profile && profile.id === fbUser.uid));
+          return;
+        }
+        window.setTimeout(check, 40);
+      };
+      check();
+    });
+  }, []);
 
   const authReloadSessionUser = async (): Promise<{ verified: boolean; error: string | null }> => {
     if (!auth) return { verified: false, error: 'Firebase Auth is not configured.' };
@@ -526,8 +578,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         authSignIn,
         authSignUp,
         authSignInWithGoogle,
+        authSendPasswordReset,
         authResendVerificationEmail,
         authReloadSessionUser,
+        waitForSessionReady,
         updateUserProfile,
         role,
         setRole,

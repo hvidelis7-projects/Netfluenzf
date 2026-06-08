@@ -9,6 +9,8 @@ interface ImportMetaEnv {
   readonly VITE_FIREBASE_STORAGE_BUCKET: string;
   /** Dev only: e.g. `127.0.0.1:8080` — connects Firestore to the local emulator (`firebase emulators:start`). */
   readonly VITE_FIRESTORE_EMULATOR_HOST?: string;
+  /** Dev only: e.g. `127.0.0.1:9099` — connects Auth to the local emulator. */
+  readonly VITE_AUTH_EMULATOR_HOST?: string;
   readonly VITE_CLOUDINARY_CLOUD_NAME: string;
   readonly VITE_CLOUDINARY_UPLOAD_PRESET: string;
   readonly VITE_APP_ORIGIN: string;

@@ -58,7 +58,11 @@ const VerifyEmail: React.FC = () => {
   };
 
   if (!needsEmailVerification) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center px-5" role="status" aria-live="polite">
+        <div className="h-10 w-10 rounded-full border-2 border-[#FF5500] border-t-transparent animate-spin" aria-hidden />
+      </div>
+    );
   }
 
   return (

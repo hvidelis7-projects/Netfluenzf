@@ -22,7 +22,10 @@ import { AppProvider, useApp } from './context/AppContext';
 import { ProtectedRoute } from './routes/ProtectedRoute';
 
 const AuthGate: React.FC = () => {
+  const location = useLocation();
   const { role, authReady, useFirebaseAuth, needsEmailVerification } = useApp();
+  const from = (location.state as { from?: string } | null)?.from ?? '/dashboard';
+
   if (!authReady) {
     return (
       <div className="min-h-screen flex items-center justify-center" role="status" aria-live="polite">
@@ -32,9 +35,20 @@ const AuthGate: React.FC = () => {
   }
   if (role !== UserRole.GUEST) {
     if (useFirebaseAuth && needsEmailVerification) {
-      return <Navigate to="/verify-email" replace />;
+      const next =
+        typeof sessionStorage !== 'undefined'
+          ? sessionStorage.getItem('trifluenz_auth_next') ?? from
+          : from;
+      return <Navigate to="/verify-email" replace state={{ next }} />;
     }
-    return <Navigate to="/dashboard" replace />;
+    const destination =
+      typeof sessionStorage !== 'undefined'
+        ? sessionStorage.getItem('trifluenz_auth_next') ?? from
+        : from;
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.removeItem('trifluenz_auth_next');
+    }
+    return <Navigate to={destination} replace />;
   }
   return <Auth />;
 };
