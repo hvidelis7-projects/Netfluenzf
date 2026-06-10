@@ -31,11 +31,17 @@ export async function dispatchVerificationEmail(user: User): Promise<void> {
   try {
     await sendEmailVerification(user, settings);
   } catch (e) {
-    // Log the error for debugging; rethrow if needed.
-    console.error('Failed to send verification email:', e);
-    throw e;
+    console.error('Failed to send verification email with settings, retrying without settings:', e);
+    // Attempt sending without custom settings as a fallback
+    try {
+      await sendEmailVerification(user);
+    } catch (fallbackError) {
+      console.error('Fallback verification email also failed:', fallbackError);
+      throw fallbackError;
+    }
   }
 }
+
 
 export type EmailActionResult = { ok: true } | { ok: false; error: string };
 
