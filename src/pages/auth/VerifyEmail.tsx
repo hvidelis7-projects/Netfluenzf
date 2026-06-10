@@ -8,8 +8,16 @@ import { useApp } from '../../context/AppContext';
 import { playSound } from '../../audio.ts';
 
 const VerifyEmail: React.FC = () => {
-  const { user, needsEmailVerification, authResendVerificationEmail, authReloadSessionUser, logout, addNotification } =
-    useApp();
+  const {
+    user,
+    firebaseUser,
+    needsEmailVerification,
+    authResendVerificationEmail,
+    authReloadSessionUser,
+    logout,
+    addNotification,
+  } = useApp();
+  const emailAddress = user?.email ?? firebaseUser?.email ?? 'your email';
   const navigate = useNavigate();
   const location = useLocation();
   const next =
@@ -18,6 +26,7 @@ const VerifyEmail: React.FC = () => {
     '/dashboard';
 
   const [loadingAction, setLoadingAction] = useState<'continue' | 'resend' | null>(null);
+  const justRegistered = (location.state as { justRegistered?: boolean } | null)?.justRegistered;
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const busy = loadingAction !== null;
@@ -34,9 +43,7 @@ const VerifyEmail: React.FC = () => {
       return;
     }
     setMessage(
-      'Verification email sent to ' +
-        (user?.email ?? 'your inbox') +
-        '. Check inbox, spam, and junk — it can take up to 5 minutes.'
+      'Verification email sent to ' + emailAddress + '. Check inbox, spam, and junk — it can take up to 5 minutes.'
     );
     addNotification('Verification email sent. Check spam or junk if you do not see it.');
     playSound('success');
@@ -76,9 +83,9 @@ const VerifyEmail: React.FC = () => {
       <div className="w-full max-w-md bg-white/60 backdrop-blur-xl border border-white/50 p-6 sm:p-8 rounded-[2.5rem] shadow-2xl">
         <h1 className="text-2xl font-black serif italic brand-text text-center mb-2">Verify your email</h1>
         <p className="text-sm text-gray-600 text-center font-medium leading-relaxed mb-4">
-          We sent a verification link to{' '}
-          <span className="font-bold text-gray-900">{user?.email ?? 'your email'}</span>. Confirm it before using
-          Trifluenz with email sign-in.
+          {justRegistered ? 'We just sent a verification link to ' : 'We sent a verification link to '}
+          <span className="font-bold text-gray-900">{emailAddress}</span>. Confirm it
+          before using Trifluenz with email sign-in.
         </p>
         <p className="text-xs text-amber-900 bg-amber-50 border border-amber-200/90 rounded-xl px-3 py-2.5 text-center font-medium leading-relaxed mb-4">
           No email yet? Check <span className="font-bold">spam</span> and <span className="font-bold">junk</span>, wait

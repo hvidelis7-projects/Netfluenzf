@@ -139,7 +139,7 @@ const Auth: React.FC = () => {
       playSound('success');
       navigate('/verify-email', {
         replace: true,
-        state: { next: isRegisterFlow ? '/onboarding' : from },
+        state: { next: isRegisterFlow ? '/onboarding' : from, justRegistered: isRegisterFlow },
       });
       return;
     }

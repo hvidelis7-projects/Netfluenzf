@@ -55,7 +55,7 @@ const AuthGate: React.FC = () => {
 
 const VerifyEmailGate: React.FC = () => {
   const location = useLocation();
-  const { role, authReady, useFirebaseAuth, needsEmailVerification } = useApp();
+  const { role, authReady, useFirebaseAuth, needsEmailVerification, firebaseUser } = useApp();
   if (!authReady) {
     return (
       <div className="min-h-screen flex items-center justify-center" role="status" aria-live="polite">
@@ -63,11 +63,14 @@ const VerifyEmailGate: React.FC = () => {
       </div>
     );
   }
-  if (role === UserRole.GUEST) {
+  if (!firebaseUser) {
     return <Navigate to="/auth" replace />;
   }
   if (!useFirebaseAuth || !needsEmailVerification) {
-    const to = (location.state as { from?: string } | null)?.from ?? '/dashboard';
+    const to =
+      (location.state as { next?: string; from?: string } | null)?.next ??
+      (location.state as { from?: string } | null)?.from ??
+      (role === UserRole.GUEST ? '/dashboard' : '/dashboard');
     return <Navigate to={to} replace />;
   }
   return <VerifyEmail />;
