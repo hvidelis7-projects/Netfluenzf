@@ -25,8 +25,13 @@ export function mapFirebaseAuthError(error: unknown, fallback: string): string {
     case 'auth/too-many-requests':
       return 'Too many email attempts. Wait 15–30 minutes, then use Resend verification email.';
     case 'auth/invalid-continue-uri':
-    case 'auth/unauthorized-continue-uri':
-      return 'We could not send the email from this site URL. Try again from the official Trifluenz link or contact support.';
+    case 'auth/unauthorized-continue-uri': {
+      const host = typeof window !== 'undefined' ? window.location.host : null;
+      if (host) {
+        return `Verification email blocked: "${host}" is not in Firebase Authorized domains. In Firebase Console → Authentication → Settings → Authorized domains, add "${host}" (and any custom domain like trifluenz.app), then redeploy.`;
+      }
+      return 'We could not send the email from this site URL. Add your live domain to Firebase Authorized domains, then try again.';
+    }
     case 'auth/quota-exceeded':
       return 'Email sending is temporarily limited. Please try again later or contact support.';
     case 'auth/operation-not-allowed':
