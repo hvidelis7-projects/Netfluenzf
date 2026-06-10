@@ -3,6 +3,21 @@
     "rules": "firebase/firestore.rules",
     "indexes": "firebase/firestore.indexes.json"
   },
+  "auth": {
+    "providers": {
+      "emailPassword": true,
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "Trifluenz",
+        "supportEmail": "Trifluenz@global.gmail.com"
+      }
+    },
+    "authorizedDomains": [
+      "localhost",
+      "127.0.0.1",
+      "netfluenz-779d1.firebaseapp.com",
+      "netfluenz-779d1.web.app"
+    ]
+  },
   "emulators": {
     "firestore": {
       "port": 8080

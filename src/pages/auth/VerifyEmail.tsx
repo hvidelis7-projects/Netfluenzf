@@ -90,6 +90,14 @@ const VerifyEmail: React.FC = () => {
         <p className="text-xs text-amber-900 bg-amber-50 border border-amber-200/90 rounded-xl px-3 py-2.5 text-center font-medium leading-relaxed mb-4">
           No email yet? Check <span className="font-bold">spam</span> and <span className="font-bold">junk</span>, wait
           up to 5 minutes, then tap <span className="font-bold">Resend</span> below.
+          {typeof window !== 'undefined' ? (
+            <>
+              {' '}
+              If Resend mentions Authorized domains, add{' '}
+              <span className="font-mono font-bold">{window.location.host}</span> in Firebase Console → Authentication →
+              Settings.
+            </>
+          ) : null}
         </p>
         <ul className="text-[11px] text-gray-600 space-y-1.5 mb-6 pl-4 list-disc marker:text-[#FF5500]">
           <li>Sender may appear as Firebase or noreply — safe to open.</li>

@@ -34,16 +34,26 @@ export type ResolvedFirebaseConfig = {
   fromEnvOnly: boolean;
 };
 
-export function resolveFirebaseConfig(): ResolvedFirebaseConfig {
-  const apiKey = pick(readEnv('VITE_FIREBASE_API_KEY'), PROJECT_DEFAULTS.apiKey);
-  const authDomain = pick(readEnv('VITE_FIREBASE_AUTH_DOMAIN'), PROJECT_DEFAULTS.authDomain);
-  const projectId = pick(readEnv('VITE_FIREBASE_PROJECT_ID'), PROJECT_DEFAULTS.projectId);
+function isValidFirebaseOptions(options: FirebaseOptions): boolean {
+  if (!options.apiKey?.startsWith('AIza')) return false;
+  if (!options.projectId || !options.authDomain || !options.appId) return false;
+  return options.authDomain.includes(options.projectId);
+}
 
-  const options: FirebaseOptions = {
-    apiKey,
-    authDomain,
-    projectId,
-    appId: pick(readEnv('VITE_FIREBASE_APP_ID'), PROJECT_DEFAULTS.appId),
+export function resolveFirebaseConfig(): ResolvedFirebaseConfig {
+  const envApiKey = readEnv('VITE_FIREBASE_API_KEY');
+  const envAuthDomain = readEnv('VITE_FIREBASE_AUTH_DOMAIN');
+  const envProjectId = readEnv('VITE_FIREBASE_PROJECT_ID');
+  const envAppId = readEnv('VITE_FIREBASE_APP_ID');
+
+  // Ignore partial Vercel env overrides (common after renames) — they break Auth while defaults still work.
+  const hasFullEnvOverride = Boolean(envApiKey && envAuthDomain && envProjectId && envAppId);
+
+  const envOptions: FirebaseOptions = {
+    apiKey: envApiKey,
+    authDomain: envAuthDomain,
+    projectId: envProjectId,
+    appId: envAppId,
     messagingSenderId: pick(
       readEnv('VITE_FIREBASE_MESSAGING_SENDER_ID'),
       PROJECT_DEFAULTS.messagingSenderId
@@ -51,15 +61,17 @@ export function resolveFirebaseConfig(): ResolvedFirebaseConfig {
     storageBucket: pick(readEnv('VITE_FIREBASE_STORAGE_BUCKET'), PROJECT_DEFAULTS.storageBucket),
   };
 
-  const isConfigured = Boolean(
-    options.apiKey && options.authDomain && options.projectId
-  );
+  const options =
+    hasFullEnvOverride && isValidFirebaseOptions(envOptions) ? envOptions : PROJECT_DEFAULTS;
 
-  const fromEnvOnly = Boolean(
-    readEnv('VITE_FIREBASE_API_KEY') &&
-      readEnv('VITE_FIREBASE_AUTH_DOMAIN') &&
-      readEnv('VITE_FIREBASE_PROJECT_ID')
-  );
+  const isConfigured = isValidFirebaseOptions(options);
+  const fromEnvOnly = hasFullEnvOverride && isValidFirebaseOptions(envOptions);
+
+  if (import.meta.env.DEV && hasFullEnvOverride && !isValidFirebaseOptions(envOptions)) {
+    console.warn(
+      '[firebase] Ignoring invalid VITE_FIREBASE_* env override; using embedded Trifluenz project defaults.'
+    );
+  }
 
   return { options, isConfigured, fromEnvOnly };
 }

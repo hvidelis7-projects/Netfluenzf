@@ -71,9 +71,20 @@ function isContinueUriError(error: unknown): boolean {
   return code === 'auth/unauthorized-continue-uri' || code === 'auth/invalid-continue-uri';
 }
 
-export async function dispatchVerificationEmail(user: User): Promise<void> {
-  const settings = getEmailActionSettings();
+function useCustomVerificationContinueUrl(): boolean {
+  const flag = (import.meta.env.VITE_VERIFICATION_USE_CONTINUE_URL as string | undefined)?.trim().toLowerCase();
+  return flag === '1' || flag === 'true' || flag === 'yes';
+}
 
+export async function dispatchVerificationEmail(user: User): Promise<void> {
+  // Default: Firebase-hosted action link (*.firebaseapp.com). Most reliable after renames /
+  // Vercel URL changes — does not depend on Authorized domains for a custom continue URL.
+  if (!useCustomVerificationContinueUrl()) {
+    await sendEmailVerification(user);
+    return;
+  }
+
+  const settings = getEmailActionSettings();
   if (!settings) {
     await sendEmailVerification(user);
     return;
