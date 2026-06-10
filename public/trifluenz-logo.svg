@@ -1,180 +1,147 @@
-<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Trifluenz logo">
   <defs>
-    <!-- Unified sleek space-gray metallic gradient for structure -->
-    <linearGradient id="tf-metal" x1="0" y1="120" x2="256" y2="220" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#1E293B" />
-      <stop offset="0.5" stop-color="#475569" />
-      <stop offset="1" stop-color="#0F172A" />
+    <!-- Obsidian gunmetal structure -->
+    <linearGradient id="tf-metal" x1="48" y1="108" x2="208" y2="228" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#94A3B8"/>
+      <stop offset="0.22" stop-color="#334155"/>
+      <stop offset="0.55" stop-color="#1E293B"/>
+      <stop offset="1" stop-color="#020617"/>
     </linearGradient>
-    
-    <!-- Polished metal ball feet gradient -->
-    <radialGradient id="tf-foot" cx="35%" cy="35%" r="65%">
-      <stop offset="0" stop-color="#64748B" />
-      <stop offset="0.75" stop-color="#1E293B" />
-      <stop offset="1" stop-color="#0F172A" />
+    <linearGradient id="tf-metal-edge" x1="128" y1="118" x2="128" y2="224" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#CBD5E1" stop-opacity="0.55"/>
+      <stop offset="0.45" stop-color="#64748B" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#0F172A" stop-opacity="0"/>
+    </linearGradient>
+
+    <radialGradient id="tf-foot" cx="32%" cy="28%" r="72%">
+      <stop offset="0" stop-color="#E2E8F0"/>
+      <stop offset="0.35" stop-color="#64748B"/>
+      <stop offset="0.82" stop-color="#1E293B"/>
+      <stop offset="1" stop-color="#020617"/>
     </radialGradient>
 
-    <!-- Premium glowing jewel gradient for the aperture ring -->
-    <linearGradient id="tf-ring" x1="94" y1="24" x2="162" y2="84" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#FFD000" />
-      <stop offset="0.5" stop-color="#FF5500" />
-      <stop offset="1" stop-color="#FF0055" />
+    <!-- Jewel-grade aperture ring -->
+    <linearGradient id="tf-ring" x1="88" y1="18" x2="168" y2="88" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFF4C2"/>
+      <stop offset="0.28" stop-color="#FFB020"/>
+      <stop offset="0.55" stop-color="#FF5500"/>
+      <stop offset="0.82" stop-color="#FF2D55"/>
+      <stop offset="1" stop-color="#C8004A"/>
+    </linearGradient>
+    <linearGradient id="tf-ring-inner" x1="108" y1="34" x2="148" y2="74" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.65"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
     </linearGradient>
 
-    <radialGradient
-      id="tf-ringFill"
-      cx="0"
-      cy="0"
-      r="1"
-      gradientUnits="userSpaceOnUse"
-      gradientTransform="translate(128 54) rotate(90) scale(36)"
-    >
-      <stop offset="0" stop-color="#1E1B4B" />
-      <stop offset="0.75" stop-color="#0B0926" />
-      <stop offset="1" stop-color="#FF5500" stop-opacity="0.2" />
+    <radialGradient id="tf-bowl" cx="50%" cy="42%" r="58%">
+      <stop offset="0" stop-color="#1A1033"/>
+      <stop offset="0.55" stop-color="#0B0920"/>
+      <stop offset="1" stop-color="#05040D"/>
     </radialGradient>
 
-    <!-- Cohesive, warm iris blades -->
-    <linearGradient id="tf-bladeA" x1="128" y1="28" x2="128" y2="60" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#FFF3B0" />
-      <stop offset="0.5" stop-color="#FFB020" />
-      <stop offset="1" stop-color="#FF7700" />
+    <!-- Aperture blades — warm luxury spectrum -->
+    <linearGradient id="tf-bladeA" x1="128" y1="24" x2="128" y2="62" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFF8DC"/>
+      <stop offset="0.42" stop-color="#FFC14D"/>
+      <stop offset="1" stop-color="#E85D04"/>
     </linearGradient>
-    <linearGradient id="tf-bladeB" x1="128" y1="28" x2="128" y2="60" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#FFD4A8" />
-      <stop offset="0.45" stop-color="#FF5500" />
-      <stop offset="1" stop-color="#FF2200" />
+    <linearGradient id="tf-bladeB" x1="128" y1="24" x2="128" y2="62" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFE4C7"/>
+      <stop offset="0.4" stop-color="#FF6B35"/>
+      <stop offset="1" stop-color="#C41E12"/>
     </linearGradient>
-    <linearGradient id="tf-bladeC" x1="128" y1="28" x2="128" y2="60" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#FFCCE8" />
-      <stop offset="0.45" stop-color="#FF6688" />
-      <stop offset="1" stop-color="#FF4400" />
+    <linearGradient id="tf-bladeC" x1="128" y1="24" x2="128" y2="62" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFD6E8"/>
+      <stop offset="0.4" stop-color="#FF5C8A"/>
+      <stop offset="1" stop-color="#D62828"/>
     </linearGradient>
 
-    <radialGradient
-      id="tf-iris"
-      cx="0"
-      cy="0"
-      r="1"
-      gradientUnits="userSpaceOnUse"
-      gradientTransform="translate(128 54) rotate(90) scale(14)"
-    >
-      <stop offset="0" stop-color="#FFFFFF" />
-      <stop offset="0.35" stop-color="#FFE8A3" />
-      <stop offset="0.75" stop-color="#FF8833" />
-      <stop offset="1" stop-color="#FF3300" />
+    <radialGradient id="tf-iris" cx="44%" cy="38%" r="62%">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.18" stop-color="#FFF1BF"/>
+      <stop offset="0.48" stop-color="#FF8C42"/>
+      <stop offset="0.78" stop-color="#FF5500"/>
+      <stop offset="1" stop-color="#9A1B00"/>
     </radialGradient>
 
-    <filter id="tf-glow" x="-40%" y="-40%" width="180%" height="180%">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#FF8833" flood-opacity="0.45" />
-      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#FF4400" flood-opacity="0.22" />
+    <filter id="tf-soft-glow" x="-35%" y="-35%" width="170%" height="170%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#FFAA66" flood-opacity="0.35"/>
+      <feDropShadow dx="0" dy="5" stdDeviation="9" flood-color="#FF4400" flood-opacity="0.18"/>
     </filter>
-    <filter id="tf-bloom" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="4" result="blur" />
+    <filter id="tf-lens-glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
       <feMerge>
-        <feMergeNode in="blur" />
-        <feMergeNode in="SourceGraphic" />
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
       </feMerge>
+    </filter>
+    <filter id="tf-contact" x="-80%" y="-20%" width="260%" height="160%">
+      <feGaussianBlur stdDeviation="3"/>
     </filter>
   </defs>
 
-  <!-- Ambient background glow wash behind the glass lens -->
-  <ellipse cx="128" cy="130" rx="88" ry="96" fill="#FF5500" opacity="0.04" />
-  <ellipse cx="128" cy="54" rx="42" ry="38" fill="#FF8833" opacity="0.08" />
+  <!-- Ambient brand wash -->
+  <ellipse cx="128" cy="132" rx="92" ry="98" fill="#FF5500" opacity="0.035"/>
+  <ellipse cx="128" cy="52" rx="48" ry="42" fill="#FF8833" opacity="0.07"/>
 
-  <!-- Ambient drop shadow under the main logo -->
-  <g filter="url(#tf-glow)">
-    <!-- Sleek metallic tripod legs -->
-    <path
-      d="M128 124 Q96 160 40 208"
-      stroke="url(#tf-metal)"
-      stroke-width="11"
-      stroke-linecap="round"
-      fill="none"
-    />
-    <path
-      d="M128 124 Q160 160 216 208"
-      stroke="url(#tf-metal)"
-      stroke-width="11"
-      stroke-linecap="round"
-      fill="none"
-    />
-    <path
-      d="M128 124 L128 222"
-      stroke="url(#tf-metal)"
-      stroke-width="9"
-      stroke-linecap="round"
-      fill="none"
-    />
+  <g filter="url(#tf-soft-glow)">
+    <!-- Tripod legs -->
+    <path d="M128 122 Q94 158 38 206" stroke="url(#tf-metal)" stroke-width="10.5" stroke-linecap="round" fill="none"/>
+    <path d="M128 122 Q162 158 218 206" stroke="url(#tf-metal)" stroke-width="10.5" stroke-linecap="round" fill="none"/>
+    <path d="M128 122 L128 218" stroke="url(#tf-metal)" stroke-width="8.5" stroke-linecap="round" fill="none"/>
 
-    <!-- Sharp highlights along the metallic legs -->
-    <path
-      d="M128 130 Q100 164 50 204"
-      stroke="#FFFFFF"
-      stroke-width="2.5"
-      stroke-linecap="round"
-      fill="none"
-      opacity="0.22"
-    />
-    <path
-      d="M128 130 Q156 164 206 204"
-      stroke="#FFFFFF"
-      stroke-width="2.5"
-      stroke-linecap="round"
-      fill="none"
-      opacity="0.22"
-    />
-    <path
-      d="M128 134 L128 214"
-      stroke="#FFFFFF"
-      stroke-width="1.8"
-      stroke-linecap="round"
-      fill="none"
-      opacity="0.18"
-    />
+    <!-- Edge highlights -->
+    <path d="M128 128 Q102 160 48 200" stroke="url(#tf-metal-edge)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <path d="M128 128 Q154 160 208 200" stroke="url(#tf-metal-edge)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+    <path d="M128 132 L128 210" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" fill="none" opacity="0.16"/>
 
-    <!-- Sleek metallic ball feet -->
-    <circle cx="40" cy="208" r="7" fill="url(#tf-foot)" />
-    <circle cx="216" cy="208" r="7" fill="url(#tf-foot)" />
-    <circle cx="128" cy="222" r="6.5" fill="url(#tf-foot)" />
-    <circle cx="40" cy="208" r="2" fill="#FFFFFF" opacity="0.3" />
-    <circle cx="216" cy="208" r="2" fill="#FFFFFF" opacity="0.3" />
-    <circle cx="128" cy="222" r="1.8" fill="#FFFFFF" opacity="0.3" />
+    <!-- Foot contact shadows -->
+    <ellipse cx="38" cy="212" rx="10" ry="3.5" fill="#0F172A" opacity="0.22" filter="url(#tf-contact)"/>
+    <ellipse cx="218" cy="212" rx="10" ry="3.5" fill="#0F172A" opacity="0.22" filter="url(#tf-contact)"/>
+    <ellipse cx="128" cy="226" rx="9" ry="3" fill="#0F172A" opacity="0.2" filter="url(#tf-contact)"/>
 
-    <!-- Sleek Y-junction hub -->
-    <circle cx="128" cy="116" r="8" fill="url(#tf-metal)" stroke="#475569" stroke-width="1" />
-    <circle cx="128" cy="116" r="3" fill="#FFFFFF" opacity="0.2" />
+    <!-- Ball feet -->
+    <circle cx="38" cy="206" r="7.5" fill="url(#tf-foot)"/>
+    <circle cx="218" cy="206" r="7.5" fill="url(#tf-foot)"/>
+    <circle cx="128" cy="220" r="7" fill="url(#tf-foot)"/>
+    <circle cx="35.5" cy="203" r="2.2" fill="#FFFFFF" opacity="0.42"/>
+    <circle cx="215.5" cy="203" r="2.2" fill="#FFFFFF" opacity="0.42"/>
+    <circle cx="126" cy="217" r="2" fill="#FFFFFF" opacity="0.38"/>
 
-    <!-- Sleek metallic stem -->
-    <rect x="120" y="86" width="16" height="26" rx="3" fill="url(#tf-metal)" />
-    <rect x="123" y="88" width="2" height="22" rx="1" fill="#FFFFFF" opacity="0.15" />
+    <!-- Machined hub -->
+    <circle cx="128" cy="114" r="9" fill="url(#tf-metal)" stroke="#475569" stroke-width="0.8"/>
+    <circle cx="128" cy="114" r="5.5" fill="none" stroke="#94A3B8" stroke-width="0.6" opacity="0.45"/>
+    <circle cx="126" cy="112" r="2.2" fill="#FFFFFF" opacity="0.28"/>
 
-    <!-- Glowing aperture ring -->
-    <circle cx="128" cy="54" r="34" stroke="url(#tf-ring)" stroke-width="5.5" fill="url(#tf-ringFill)" />
+    <!-- Stem -->
+    <rect x="119.5" y="82" width="17" height="28" rx="3.5" fill="url(#tf-metal)"/>
+    <rect x="122.5" y="84" width="2.5" height="24" rx="1.2" fill="#FFFFFF" opacity="0.18"/>
 
-    <!-- 3 aperture blades -->
-    <g transform="translate(128 54)">
-      <path
-        d="M0 -26 C9 -24 16 -16 14 -5 L0 6 L-14 -5 C-16 -16 -9 -24 0 -26 Z"
-        fill="url(#tf-bladeA)"
-      />
-      <path
-        d="M0 -26 C9 -24 16 -16 14 -5 L0 6 L-14 -5 C-16 -16 -9 -24 0 -26 Z"
-        fill="url(#tf-bladeB)"
-        transform="rotate(120)"
-      />
-      <path
-        d="M0 -26 C9 -24 16 -16 14 -5 L0 6 L-14 -5 C-16 -16 -9 -24 0 -26 Z"
-        fill="url(#tf-bladeC)"
-        transform="rotate(240)"
-      />
+    <!-- Lens housing -->
+    <circle cx="128" cy="52" r="36" fill="url(#tf-bowl)"/>
+    <circle cx="128" cy="52" r="36" stroke="url(#tf-ring)" stroke-width="6" fill="none"/>
+    <circle cx="128" cy="52" r="31.5" stroke="url(#tf-ring-inner)" stroke-width="1.2" fill="none" opacity="0.85"/>
+
+    <!-- Blade shadows -->
+    <g transform="translate(128 52)" opacity="0.35">
+      <path d="M0 -27 C10 -25 17 -16 15 -4 L0 7 L-15 -4 C-17 -16 -10 -25 0 -27 Z" fill="#120818" transform="rotate(0)"/>
+      <path d="M0 -27 C10 -25 17 -16 15 -4 L0 7 L-15 -4 C-17 -16 -10 -25 0 -27 Z" fill="#120818" transform="rotate(120)"/>
+      <path d="M0 -27 C10 -25 17 -16 15 -4 L0 7 L-15 -4 C-17 -16 -10 -25 0 -27 Z" fill="#120818" transform="rotate(240)"/>
     </g>
 
-    <!-- Inner lens core with bloom -->
-    <g filter="url(#tf-bloom)">
-      <circle cx="128" cy="54" r="11" fill="url(#tf-iris)" />
+    <!-- Aperture blades -->
+    <g transform="translate(128 52)">
+      <path d="M0 -27 C10 -25 17 -16 15 -4 L0 7 L-15 -4 C-17 -16 -10 -25 0 -27 Z" fill="url(#tf-bladeA)"/>
+      <path d="M0 -27 C10 -25 17 -16 15 -4 L0 7 L-15 -4 C-17 -16 -10 -25 0 -27 Z" fill="url(#tf-bladeB)" transform="rotate(120)"/>
+      <path d="M0 -27 C10 -25 17 -16 15 -4 L0 7 L-15 -4 C-17 -16 -10 -25 0 -27 Z" fill="url(#tf-bladeC)" transform="rotate(240)"/>
     </g>
-    <ellipse cx="121" cy="47" rx="9" ry="6" fill="#FFFFFF" opacity="0.4" />
-    <circle cx="133" cy="58" r="2.5" fill="#FFFFFF" opacity="0.55" />
+
+    <!-- Glass core -->
+    <g filter="url(#tf-lens-glow)">
+      <circle cx="128" cy="52" r="12" fill="url(#tf-iris)"/>
+    </g>
+    <ellipse cx="120" cy="44" rx="10" ry="6.5" fill="#FFFFFF" opacity="0.48"/>
+    <circle cx="134" cy="56" r="2.8" fill="#FFFFFF" opacity="0.62"/>
+    <circle cx="124" cy="58" r="1.2" fill="#FFFFFF" opacity="0.35"/>
   </g>
 </svg>

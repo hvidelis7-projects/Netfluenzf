@@ -23,7 +23,12 @@ export function mapFirebaseAuthError(error: unknown, fallback: string): string {
     case 'auth/popup-blocked':
       return 'Popup was blocked. Allow popups and try Google sign-in again.';
     case 'auth/too-many-requests':
-      return 'Too many attempts. Please wait a moment and try again.';
+      return 'Too many email attempts. Wait 15–30 minutes, then use Resend verification email.';
+    case 'auth/invalid-continue-uri':
+    case 'auth/unauthorized-continue-uri':
+      return 'We could not send the email from this site URL. Try again from the official Trifluenz link or contact support.';
+    case 'auth/quota-exceeded':
+      return 'Email sending is temporarily limited. Please try again later or contact support.';
     case 'auth/operation-not-allowed':
       return 'This sign-in method is not enabled. Contact support if this continues.';
     case 'auth/invalid-api-key':

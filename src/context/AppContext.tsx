@@ -9,7 +9,6 @@ import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   reload,
-  sendEmailVerification,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -19,6 +18,10 @@ import { UserRole, Campaign, Transaction, Influencer, UserProfile } from '../typ
 import { clearPersistedSession } from '../persistedSession';
 import { auth, createGoogleAuthProvider, isFirebaseConfigured, needsPasswordEmailVerification } from '../lib/firebase';
 import { mapFirebaseAuthError } from '../lib/auth/mapFirebaseAuthError';
+import {
+  completeEmailVerificationFromUrl,
+  dispatchVerificationEmail,
+} from '../lib/auth/verificationEmail';
 import {
   loadProfileForUser,
   loadUserDataRow,
@@ -318,17 +321,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!auth) return { error: 'Firebase Auth is not configured.' };
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
+
+      // Send verification immediately — never block on Firestore profile writes.
+      try {
+        await dispatchVerificationEmail(cred.user);
+      } catch (emailErr: unknown) {
+        return {
+          error: mapFirebaseAuthError(
+            emailErr,
+            'Your account was created, but the verification email could not be sent. Sign in and tap Resend verification email, or try again in a few minutes.'
+          ),
+        };
+      }
+
       const displayName = email.split('@')[0] || 'User';
-      await upsertProfileRow(cred.user.uid, email, selectedRole, displayName);
-      await upsertUserData(cred.user.uid, {
-        campaigns: [],
-        transactions: [],
-        walletBalance: 0,
-        escrowBalance: 0,
-        notifications: [],
-      });
-      const continueUrl = typeof window !== 'undefined' ? `${window.location.origin}/auth` : undefined;
-      await sendEmailVerification(cred.user, continueUrl ? { url: continueUrl } : undefined);
+      try {
+        await upsertProfileRow(cred.user.uid, email, selectedRole, displayName);
+        await upsertUserData(cred.user.uid, {
+          campaigns: [],
+          transactions: [],
+          walletBalance: 0,
+          escrowBalance: 0,
+          notifications: [],
+        });
+      } catch {
+        // Profile hydration will retry after sign-in; verification email already sent.
+      }
+
       return { error: null };
     } catch (e: unknown) {
       return { error: mapFirebaseAuthError(e, 'Sign up failed. Please try again.') };
@@ -377,8 +396,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!u) return { error: 'You are not signed in.' };
     if (!needsPasswordEmailVerification(u)) return { error: null };
     try {
-      const continueUrl = typeof window !== 'undefined' ? `${window.location.origin}/auth` : undefined;
-      await sendEmailVerification(u, continueUrl ? { url: continueUrl } : undefined);
+      await dispatchVerificationEmail(u);
       return { error: null };
     } catch (e: unknown) {
       return { error: mapFirebaseAuthError(e, 'Could not send verification email.') };
@@ -419,6 +437,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return { verified: false, error: mapFirebaseAuthError(e, 'Could not refresh your session.') };
     }
   };
+
+  // Complete verification when the app opens from an email action link.
+  useEffect(() => {
+    if (!auth || typeof window === 'undefined') return;
+
+    void completeEmailVerificationFromUrl(auth, window.location.search).then((result) => {
+      if (!result?.ok) return;
+      void authReloadSessionUser();
+    });
+  }, []);
 
   const logout = useCallback(async () => {
     clearPersistedSession();

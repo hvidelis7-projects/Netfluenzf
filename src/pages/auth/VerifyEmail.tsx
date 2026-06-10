@@ -33,8 +33,12 @@ const VerifyEmail: React.FC = () => {
       setError(err);
       return;
     }
-    setMessage('Verification email sent. Check your inbox and spam folder.');
-    addNotification('Verification email sent.');
+    setMessage(
+      'Verification email sent to ' +
+        (user?.email ?? 'your inbox') +
+        '. Check inbox, spam, and junk — it can take up to 5 minutes.'
+    );
+    addNotification('Verification email sent. Check spam or junk if you do not see it.');
     playSound('success');
   };
 
@@ -50,7 +54,9 @@ const VerifyEmail: React.FC = () => {
       return;
     }
     if (!verified) {
-      setError('Your email is not verified yet. Open the link we sent you, then try again.');
+      setError(
+        'Your email is not verified yet. Open the link in the email we sent (check spam or junk), wait a few minutes, then try again — or tap Resend.'
+      );
       return;
     }
     playSound('success');
@@ -69,14 +75,32 @@ const VerifyEmail: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center px-5 py-20">
       <div className="w-full max-w-md bg-white/60 backdrop-blur-xl border border-white/50 p-6 sm:p-8 rounded-[2.5rem] shadow-2xl">
         <h1 className="text-2xl font-black serif italic brand-text text-center mb-2">Verify your email</h1>
-        <p className="text-sm text-gray-600 text-center font-medium leading-relaxed mb-6">
+        <p className="text-sm text-gray-600 text-center font-medium leading-relaxed mb-4">
           We sent a verification link to{' '}
-          <span className="font-bold text-gray-900">{user?.email ?? 'your email'}</span>. You need to confirm it before
-          using Trifluenz with email sign-in.
+          <span className="font-bold text-gray-900">{user?.email ?? 'your email'}</span>. Confirm it before using
+          Trifluenz with email sign-in.
         </p>
+        <p className="text-xs text-amber-900 bg-amber-50 border border-amber-200/90 rounded-xl px-3 py-2.5 text-center font-medium leading-relaxed mb-4">
+          No email yet? Check <span className="font-bold">spam</span> and <span className="font-bold">junk</span>, wait
+          up to 5 minutes, then tap <span className="font-bold">Resend</span> below.
+        </p>
+        <ul className="text-[11px] text-gray-600 space-y-1.5 mb-6 pl-4 list-disc marker:text-[#FF5500]">
+          <li>Sender may appear as Firebase or noreply — safe to open.</li>
+          <li>Work or school inboxes often block automated mail — try a personal Gmail if needed.</li>
+          <li>
+            Still nothing?{' '}
+            <Link to="/contact" className="text-[#FF5500] font-semibold underline">
+              Contact support
+            </Link>{' '}
+            or sign out and use Google sign-in instead.
+          </li>
+        </ul>
 
         {message && (
-          <p className="text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2 mb-4" role="status">
+          <p
+            className="text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2 mb-4"
+            role="status"
+          >
             {message}
           </p>
         )}
@@ -93,7 +117,9 @@ const VerifyEmail: React.FC = () => {
             onClick={() => void handleContinue()}
             className="w-full py-4 button-brand rounded-xl text-xs font-black uppercase tracking-widest shadow-xl active:scale-95 transition-transform disabled:opacity-70 flex items-center justify-center gap-2"
           >
-            {loadingAction === 'continue' && <span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" aria-hidden />}
+            {loadingAction === 'continue' && (
+              <span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" aria-hidden />
+            )}
             {loadingAction === 'continue' ? 'Checking…' : "I've verified — continue"}
           </button>
           <button
@@ -102,7 +128,9 @@ const VerifyEmail: React.FC = () => {
             onClick={() => void handleResend()}
             className="w-full py-3 rounded-xl text-xs font-bold uppercase tracking-widest border-2 border-gray-200 bg-white/70 text-gray-800 hover:border-[#FF5500]/40 transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
           >
-            {loadingAction === 'resend' && <span className="h-4 w-4 rounded-full border-2 border-gray-700 border-t-transparent animate-spin" aria-hidden />}
+            {loadingAction === 'resend' && (
+              <span className="h-4 w-4 rounded-full border-2 border-gray-700 border-t-transparent animate-spin" aria-hidden />
+            )}
             {loadingAction === 'resend' ? 'Sending…' : 'Resend verification email'}
           </button>
           <button
