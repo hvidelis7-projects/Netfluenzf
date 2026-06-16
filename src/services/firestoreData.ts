@@ -29,10 +29,10 @@ export interface UserDataRow {
   notifications: string[];
 }
 
-const DEFAULT_AVATAR_BRAND =
-  'https://images.unsplash.com/photo-1559526323-cb2f2fe2591b?auto=format&fit=crop&q=80&w=200';
-const DEFAULT_AVATAR_CREATOR =
-  'https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?auto=format&fit=crop&q=80&w=200';
+/** Generates a unique illustrated avatar from DiceBear using the user's name or id as the seed. */
+function defaultAvatarForSeed(seed: string): string {
+  return `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(seed || 'user')}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf&radius=50`;
+}
 
 interface CacheEntry<T> {
   data: T;
@@ -57,7 +57,7 @@ function mapProfileDoc(id: string, data: Record<string, unknown>): UserProfile |
           role: UserRole.BRAND,
           name: (data.displayName as string) || 'Brand',
           email: (data.email as string) || '',
-          avatar: (data.avatarUrl as string) || DEFAULT_AVATAR_BRAND,
+          avatar: (data.avatarUrl as string) || defaultAvatarForSeed((data.displayName as string) || id),
           verified: Boolean(data.verified),
           industry: (data.industry as string) || 'General',
           website: (data.website as string) || '',
@@ -71,7 +71,7 @@ function mapProfileDoc(id: string, data: Record<string, unknown>): UserProfile |
           role: UserRole.INFLUENCER,
           name: (data.displayName as string) || 'Creator',
           email: (data.email as string) || '',
-          avatar: (data.avatarUrl as string) || DEFAULT_AVATAR_CREATOR,
+          avatar: (data.avatarUrl as string) || defaultAvatarForSeed((data.displayName as string) || id),
           verified: Boolean(data.verified),
           niche: Array.isArray(data.niche) ? (data.niche as string[]) : ['General'],
           followers: typeof data.followers === 'number' ? data.followers : 0,

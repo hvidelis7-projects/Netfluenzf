@@ -33,6 +33,17 @@ for (const { name, size } of sizes) {
   console.log(`Wrote ${outPath}`);
 }
 
+// Document-ready: white background, generous padding
+const docSize = 2048;
+const docResvg = new Resvg(svg, {
+  fitTo: { mode: 'width', value: Math.round(docSize * 0.72) },
+  background: '#FFFFFF',
+});
+const docPng = docResvg.render().asPng();
+const docPath = join(outDir, 'trifluenz-logo-document.png');
+writeFileSync(docPath, docPng);
+console.log(`Wrote ${docPath}`);
+
 // Also refresh root PNG used by older references
 writeFileSync(join(root, 'public', 'trifluenz-logo.png'), readFileSync(join(outDir, 'trifluenz-logo-1024.png')));
 console.log('Updated public/trifluenz-logo.png');

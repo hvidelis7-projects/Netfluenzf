@@ -9,6 +9,7 @@ import { UserRole, Influencer, UserProfile } from '../types';
 import { playSound } from '../audio.ts';
 import { isCloudinaryConfigured, uploadToCloudinary } from '../services/cloudinary';
 import { useModalBackNavigation } from '../hooks/useModalBackNavigation';
+import AvatarPicker from '../components/AvatarPicker';
 
 const Profile: React.FC = () => {
   const { user, updateUserProfile, role, addNotification } = useApp();
@@ -22,6 +23,9 @@ const Profile: React.FC = () => {
   const portfolioInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const [avatarBusy, setAvatarBusy] = useState(false);
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+
+  useModalBackNavigation(showAvatarPicker, () => setShowAvatarPicker(false));
 
   useEffect(() => {
     if (user && !isEditing) setFormData({ ...user });
@@ -149,6 +153,19 @@ const Profile: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-5 pt-24 pb-20 space-y-8 min-h-screen">
+      {showAvatarPicker && (
+        <AvatarPicker
+          currentAvatar={(formData.avatar ?? user.avatar) || ''}
+          busy={avatarBusy}
+          onSelect={(url) => {
+            handleChange('avatar', url);
+            playSound('success');
+            addNotification('Avatar updated');
+          }}
+          onUploadClick={() => avatarInputRef.current?.click()}
+          onClose={() => setShowAvatarPicker(false)}
+        />
+      )}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2 border-b border-white/20">
         <div className="space-y-1">
           <h1 className="text-4xl md:text-5xl font-black serif italic brand-text tracking-tighter uppercase leading-none">Your profile</h1>
@@ -207,7 +224,7 @@ const Profile: React.FC = () => {
                <img
                  src={(isEditing ? formData.avatar : user.avatar) || user.avatar}
                  alt={user.name}
-                 className="w-full h-full object-cover"
+                 className="w-full h-full object-cover bg-gray-100"
                />
                {isEditing && (
                  <button
@@ -215,7 +232,7 @@ const Profile: React.FC = () => {
                    disabled={avatarBusy}
                    onClick={() => {
                      playSound('click');
-                     avatarInputRef.current?.click();
+                     setShowAvatarPicker(true);
                    }}
                    className="absolute inset-0 bg-black/50 flex items-center justify-center cursor-pointer hover:bg-black/60 transition-colors disabled:cursor-wait disabled:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                  >
